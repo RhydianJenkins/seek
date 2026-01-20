@@ -14,3 +14,16 @@ Then, enter a dev shell with:
 nix develop # enter dev shell with all dependencies
 go run main.go # print help information
 ```
+
+You will then need to index some knowledge bases.
+For example, you can index the test emails in this repository:
+
+```sh
+go run . index --dataDir test-data/emails
+```
+
+Then you can run a search the knowledge base
+
+```sh
+go run . search "is there any deadlines coming up?"
+```
