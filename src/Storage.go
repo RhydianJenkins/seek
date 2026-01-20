@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/qdrant/go-client/qdrant"
+	"github.com/rhydianjenkins/rag-mcp-server/src/config"
 )
 
 type Storage struct {
@@ -17,6 +18,7 @@ type Storage struct {
 	collectionName string
 	ollamaURL      string
 	vectorSize     uint64
+	embeddingModel string
 }
 
 type ollamaEmbedRequest struct {
@@ -28,11 +30,11 @@ type ollamaEmbedResponse struct {
 	Embedding []float32 `json:"embedding"`
 }
 
-func Connect(ollamaURL string) (*Storage, error) {
+func Connect(cfg *config.Config) (*Storage, error) {
 	client, err := qdrant.NewClient(&qdrant.Config{
-		Host:   "localhost",
-		Port:   6334,
-		UseTLS: false,
+		Host:   cfg.QdrantHost,
+		Port:   cfg.QdrantPort,
+		UseTLS: cfg.QdrantUseTLS,
 		// APIKey: "<your-api-key>",
 		// PoolSize: 3,
 		// KeepAliveTime: 10,
@@ -47,9 +49,10 @@ func Connect(ollamaURL string) (*Storage, error) {
 
 	storage := &Storage{
 		client:         client,
-		collectionName: "my_collection",
-		ollamaURL:      ollamaURL,
-		vectorSize:     768, // for nomic-embed-text
+		collectionName: cfg.CollectionName,
+		ollamaURL:      cfg.OllamaURL,
+		vectorSize:     cfg.VectorSize,
+		embeddingModel: cfg.EmbeddingModel,
 	}
 
 	return storage, nil
@@ -57,7 +60,7 @@ func Connect(ollamaURL string) (*Storage, error) {
 
 func (storage *Storage) GetEmbedding(text string) ([]float32, error) {
 	reqBody := ollamaEmbedRequest{
-		Model:  "nomic-embed-text",
+		Model:  storage.embeddingModel,
 		Prompt: text,
 	}
 

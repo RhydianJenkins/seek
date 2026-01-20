@@ -9,6 +9,7 @@ import (
 
 	"github.com/qdrant/go-client/qdrant"
 	"github.com/rhydianjenkins/rag-mcp-server/src"
+	"github.com/rhydianjenkins/rag-mcp-server/src/config"
 )
 
 func chunkText(text string, maxChunkSize int) []string {
@@ -67,35 +68,37 @@ func readTextFiles(dataDir string) (map[string]string, error) {
 	return files, err
 }
 
-func Index(ollamaURL string, dataDir string, chunkSize int) error {
-	storage, err := src.Connect(ollamaURL)
-
+// IndexFiles indexes files from a directory and returns structured results
+// This function is used by both CLI and MCP modes
+func IndexFiles(cfg *config.Config, dataDir string, chunkSize int) (*IndexResult, error) {
+	storage, err := src.Connect(cfg)
 	if err != nil {
-		log.Fatal("Unable to create storage")
-		return err
+		return &IndexResult{
+			Success: false,
+			Error:   fmt.Sprintf("Unable to create storage: %v", err),
+		}, err
 	}
 
 	files, err := readTextFiles(dataDir)
 	if err != nil {
-		log.Fatalf("Unable to read files from directory %s: %v", dataDir, err)
-		return err
+		return &IndexResult{
+			Success: false,
+			Error:   fmt.Sprintf("Unable to read files from directory %s: %v", dataDir, err),
+		}, err
 	}
 
 	if len(files) == 0 {
-		log.Printf("Warning: No .txt files found in %s", dataDir)
+		return &IndexResult{
+			Success: false,
+			Error:   fmt.Sprintf("No .txt files found in %s", dataDir),
+		}, fmt.Errorf("no .txt files found in %s", dataDir)
 	}
-
-	log.Printf("Found %d files to index (chunk size: %d chars)", len(files), chunkSize)
 
 	var points []*qdrant.PointStruct
 	pointID := uint64(1)
 
 	for filename, content := range files {
-		log.Printf("Processing file: %s (%d bytes)", filename, len(content))
-
 		chunks := chunkText(content, chunkSize)
-
-		log.Printf("  Split into %d chunks", len(chunks))
 
 		for chunkIdx, chunk := range chunks {
 			embedding, err := storage.GetEmbedding(chunk)
@@ -122,19 +125,41 @@ func Index(ollamaURL string, dataDir string, chunkSize int) error {
 	}
 
 	if len(points) == 0 {
-		return fmt.Errorf("no points to index")
+		return &IndexResult{
+			Success: false,
+			Error:   "No points to index",
+		}, fmt.Errorf("no points to index")
 	}
 
-	log.Printf("Indexing %d total chunks into database", len(points))
-
 	err = storage.GenerateDb(points)
-
 	if err != nil {
-		log.Fatal("Unable to generate db")
+		return &IndexResult{
+			Success: false,
+			Error:   fmt.Sprintf("Unable to generate db: %v", err),
+		}, err
+	}
+
+	return &IndexResult{
+		Success:      true,
+		FilesIndexed: len(files),
+		TotalChunks:  len(points),
+		Message:      fmt.Sprintf("Successfully indexed %d chunks from %d files", len(points), len(files)),
+	}, nil
+}
+
+// Index is the CLI wrapper for backward compatibility
+func Index(ollamaURL string, dataDir string, chunkSize int) error {
+	cfg := config.DefaultConfig()
+	cfg.OllamaURL = ollamaURL
+
+	log.Printf("Found files to index (chunk size: %d chars)", chunkSize)
+
+	result, err := IndexFiles(cfg, dataDir, chunkSize)
+	if err != nil {
+		log.Fatal(result.Error)
 		return err
 	}
 
-	log.Printf("Successfully indexed %d chunks from %d files", len(points), len(files))
-
+	log.Printf("%s", result.Message)
 	return nil
 }

@@ -1,14 +1,21 @@
 package main
 
 import (
-	"fmt"
+	"context"
+	"log"
 
+	"github.com/rhydianjenkins/rag-mcp-server/src/config"
 	"github.com/rhydianjenkins/rag-mcp-server/src/handlers"
 	"github.com/spf13/cobra"
 )
 
 func initCmd() *cobra.Command {
-	var ollamaAddress string
+	var (
+		ollamaAddress  string
+		qdrantHost     string
+		qdrantPort     int
+		collectionName string
+	)
 
 	var rootCmd = &cobra.Command{
 		Short: "RAG MCP Server",
@@ -18,6 +25,9 @@ func initCmd() *cobra.Command {
 	}
 
 	rootCmd.PersistentFlags().StringVar(&ollamaAddress, "ollamaAddress", "http://localhost:11434", "Ollama server address")
+	rootCmd.PersistentFlags().StringVar(&qdrantHost, "qdrantHost", "localhost", "Qdrant server host")
+	rootCmd.PersistentFlags().IntVar(&qdrantPort, "qdrantPort", 6334, "Qdrant server port")
+	rootCmd.PersistentFlags().StringVar(&collectionName, "collection", "my_collection", "Qdrant collection name")
 
 	var dataDir string
 	var chunkSize int
@@ -48,11 +58,32 @@ func initCmd() *cobra.Command {
 	rootCmd.AddCommand(searchCmd)
 
 	var runCmd = &cobra.Command{
-		Use: "run",
-		Short: "Run the mcp server",
-		Args: cobra.ExactArgs(0),
+		Use:   "run",
+		Short: "Run the MCP server over stdio",
+		Long:  "Starts the MCP server using stdio transport for integration with MCP clients",
+		Args:  cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("TODO")
+			cfg := &config.Config{
+				QdrantHost:     qdrantHost,
+				QdrantPort:     qdrantPort,
+				QdrantUseTLS:   false,
+				CollectionName: collectionName,
+				VectorSize:     768,
+				OllamaURL:      ollamaAddress,
+				EmbeddingModel: "nomic-embed-text",
+				ServerName:     "rag-mcp-server",
+				ServerVersion:  "1.0.0",
+			}
+
+			ragServer, err := NewRAGServer(cfg)
+			if err != nil {
+				log.Fatalf("Failed to create RAG server: %v", err)
+			}
+
+			ctx := context.Background()
+			if err := ragServer.Run(ctx); err != nil {
+				log.Fatalf("MCP server error: %v", err)
+			}
 		},
 	}
 	rootCmd.AddCommand(runCmd)
