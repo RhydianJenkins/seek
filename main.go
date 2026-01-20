@@ -26,6 +26,17 @@ func initCmd() *cobra.Command {
 	}
 	rootCmd.AddCommand(indexCmd)
 
+	var searchCmd = &cobra.Command{
+		Use: "search",
+		Short: "Search the knowledge base",
+		Args: cobra.ExactArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			searchTerm := args[0]
+			handlers.Search(searchTerm)
+		},
+	}
+	rootCmd.AddCommand(searchCmd)
+
 	var runCmd = &cobra.Command{
 		Use: "run",
 		Short: "Run the mcp server",
