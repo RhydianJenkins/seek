@@ -17,11 +17,6 @@
           exec ${pkgs.process-compose}/bin/process-compose -f ${./process-compose.yaml}
         '';
 
-        apps.default = {
-          type = "app";
-          program = "${self.packages.${system}.default}/bin/start-services";
-        };
-
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             go
@@ -41,7 +36,7 @@
             echo "Qdrant version: $(qdrant --version)"
             echo "Ollama version: $(ollama --version)"
             echo ""
-            echo "To start all services, run `nix run` from host"
+            echo "To start all services, run 'nix run'"
           '';
         };
       }
