@@ -4,11 +4,11 @@ import (
 	"log"
 
 	"github.com/qdrant/go-client/qdrant"
-	"github.com/rhydianjenkins/rag-mcp-server/src/storage"
+	"github.com/rhydianjenkins/rag-mcp-server/src"
 )
 
-func Index(knowledgeBasePath string) error {
-	storage, err := storage.Connect()
+func Index() error {
+	storage, err := src.Connect()
 
 	if err != nil {
 		log.Fatal("Unable to create storage");

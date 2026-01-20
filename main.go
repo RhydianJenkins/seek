@@ -18,10 +18,10 @@ func initCmd() *cobra.Command {
 	var indexCmd = &cobra.Command{
 		Use: "index",
 		Short: "Index the knowledge base",
-		Args: cobra.ExactArgs(1),
+		Args: cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
-			knowledgeBasePath := args[0]
-			handlers.Index(knowledgeBasePath)
+			// TODO Rhydian point to knowledge base source
+			handlers.Index()
 		},
 	}
 	rootCmd.AddCommand(indexCmd)

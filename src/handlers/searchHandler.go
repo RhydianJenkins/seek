@@ -3,17 +3,17 @@ package handlers
 import (
 	"log"
 
-	"github.com/rhydianjenkins/rag-mcp-server/src/storage"
+	"github.com/rhydianjenkins/rag-mcp-server/src"
 )
 
-func Search(knowledgeBasePath string) error {
-	storage, err := storage.Connect()
+func Search(searchTerm string) error {
+	storage, err := src.Connect()
 
 	if err != nil {
 		return err;
 	}
 
-	searchResult, err := storage.Search("Hello")
+	searchResult, err := storage.Search(searchTerm)
 
 	if err != nil {
 		return err;
