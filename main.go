@@ -41,9 +41,9 @@ func initCmd() *cobra.Command {
 	var dataDir string
 	var chunkSize int
 	var indexCmd = &cobra.Command{
-		Use: "index",
+		Use:   "index",
 		Short: "Index the knowledge base",
-		Args: cobra.ExactArgs(0),
+		Args:  cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
 			handlers.Index(ollamaAddress, dataDir, chunkSize)
 		},
@@ -55,9 +55,9 @@ func initCmd() *cobra.Command {
 
 	var limit int
 	var searchCmd = &cobra.Command{
-		Use: "search",
+		Use:   "search",
 		Short: "Search the knowledge base",
-		Args: cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			searchTerm := args[0]
 			handlers.Search(searchTerm, ollamaAddress, limit)
