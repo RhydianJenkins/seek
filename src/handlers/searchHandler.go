@@ -3,12 +3,11 @@ package handlers
 import (
 	"fmt"
 
-	"github.com/rhydianjenkins/rag-mcp-server/src/config"
 	"github.com/rhydianjenkins/rag-mcp-server/src/db"
 )
 
 func SearchFiles(searchTerm string, limit int) (*SearchResults, error) {
-	storage, err := db.Connect(config.Get())
+	storage, err := db.Connect()
 	if err != nil {
 		return &SearchResults{
 			Success: false,

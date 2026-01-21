@@ -13,8 +13,9 @@ import (
 	"github.com/rhydianjenkins/rag-mcp-server/src/config"
 )
 
-func Connect(cfg *config.Config) (*Storage, error) {
-	// TODO Rhydian this comes from default?
+func Connect() (*Storage, error) {
+	cfg := config.Get()
+
 	client, err := qdrant.NewClient(&qdrant.Config{
 		Host:   cfg.QdrantHost,
 		Port:   cfg.QdrantPort,

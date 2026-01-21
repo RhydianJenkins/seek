@@ -18,7 +18,7 @@ type RAGServer struct {
 func NewRAGServer() (*RAGServer, error) {
 	cfg := config.Get()
 
-	storage, err := db.Connect(cfg)
+	storage, err := db.Connect()
 	if err != nil {
 		return nil, err
 	}

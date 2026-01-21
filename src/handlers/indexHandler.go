@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/qdrant/go-client/qdrant"
-	"github.com/rhydianjenkins/rag-mcp-server/src/config"
 	"github.com/rhydianjenkins/rag-mcp-server/src/db"
 )
 
@@ -69,7 +68,7 @@ func readTextFiles(dataDir string) (map[string]string, error) {
 }
 
 func IndexFiles(dataDir string, chunkSize int) (*IndexResult, error) {
-	storage, err := db.Connect(config.Get())
+	storage, err := db.Connect()
 	if err != nil {
 		return &IndexResult{
 			Success: false,
