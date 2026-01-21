@@ -45,7 +45,13 @@ func initCmd() *cobra.Command {
 		Short: "Index the knowledge base",
 		Args:  cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
-			handlers.Index(ollamaAddress, dataDir, chunkSize)
+			config.Initialize(&config.Config{
+				OllamaURL:      ollamaAddress,
+				QdrantHost:     qdrantHost,
+				QdrantPort:     qdrantPort,
+				CollectionName: collectionName,
+			})
+			handlers.Index(dataDir, chunkSize)
 		},
 	}
 	indexCmd.Flags().StringVar(&dataDir, "dataDir", "", "Directory containing .txt files to index (required)")
@@ -59,8 +65,14 @@ func initCmd() *cobra.Command {
 		Short: "Search the knowledge base",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
+			config.Initialize(&config.Config{
+				OllamaURL:      ollamaAddress,
+				QdrantHost:     qdrantHost,
+				QdrantPort:     qdrantPort,
+				CollectionName: collectionName,
+			})
 			searchTerm := args[0]
-			handlers.Search(searchTerm, ollamaAddress, limit)
+			handlers.Search(searchTerm, limit)
 		},
 	}
 	searchCmd.Flags().IntVar(&limit, "limit", 3, "Maximum number of search results to return")
@@ -89,19 +101,15 @@ func initCmd() *cobra.Command {
 			defer logFile.Close()
 			log.SetOutput(logFile)
 
-			cfg := &config.Config{
+			config.Initialize(&config.Config{
 				QdrantHost:     qdrantHost,
 				QdrantPort:     qdrantPort,
-				QdrantUseTLS:   false,
 				CollectionName: collectionName,
-				VectorSize:     768,
 				OllamaURL:      ollamaAddress,
-				EmbeddingModel: "nomic-embed-text",
-				ServerName:     "rag-mcp-server",
 				ServerVersion:  strings.TrimSpace(version),
-			}
+			})
 
-			ragServer, err := mcp.NewRAGServer(cfg)
+			ragServer, err := mcp.NewRAGServer()
 			if err != nil {
 				log.Fatalf("Failed to create RAG server: %v", err)
 			}

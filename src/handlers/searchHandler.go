@@ -7,8 +7,8 @@ import (
 	"github.com/rhydianjenkins/rag-mcp-server/src/storage"
 )
 
-func SearchFiles(cfg *config.Config, searchTerm string, limit int) (*SearchResults, error) {
-	storage, err := storage.Connect(cfg)
+func SearchFiles(searchTerm string, limit int) (*SearchResults, error) {
+	storage, err := storage.Connect(config.Get())
 	if err != nil {
 		return &SearchResults{
 			Success: false,
@@ -54,11 +54,8 @@ func SearchFiles(cfg *config.Config, searchTerm string, limit int) (*SearchResul
 	return results, nil
 }
 
-func Search(searchTerm string, ollamaURL string, limit int) error {
-	cfg := config.DefaultConfig()
-	cfg.OllamaURL = ollamaURL
-
-	results, err := SearchFiles(cfg, searchTerm, limit)
+func Search(searchTerm string, limit int) error {
+	results, err := SearchFiles(searchTerm, limit)
 	if err != nil {
 		return err
 	}

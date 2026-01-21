@@ -68,8 +68,8 @@ func readTextFiles(dataDir string) (map[string]string, error) {
 	return files, err
 }
 
-func IndexFiles(cfg *config.Config, dataDir string, chunkSize int) (*IndexResult, error) {
-	storage, err := storage.Connect(cfg)
+func IndexFiles(dataDir string, chunkSize int) (*IndexResult, error) {
+	storage, err := storage.Connect(config.Get())
 	if err != nil {
 		return &IndexResult{
 			Success: false,
@@ -145,13 +145,10 @@ func IndexFiles(cfg *config.Config, dataDir string, chunkSize int) (*IndexResult
 	}, nil
 }
 
-func Index(ollamaURL string, dataDir string, chunkSize int) error {
-	cfg := config.DefaultConfig()
-	cfg.OllamaURL = ollamaURL
-
+func Index(dataDir string, chunkSize int) error {
 	log.Printf("Found files to index (chunk size: %d chars)", chunkSize)
 
-	result, err := IndexFiles(cfg, dataDir, chunkSize)
+	result, err := IndexFiles(dataDir, chunkSize)
 	if err != nil {
 		log.Fatal(result.Error)
 		return err

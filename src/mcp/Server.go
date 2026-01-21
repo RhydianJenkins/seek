@@ -11,12 +11,13 @@ import (
 )
 
 type RAGServer struct {
-	config    *config.Config
 	mcpServer *mcp.Server
 	storage   *storage.Storage
 }
 
-func NewRAGServer(cfg *config.Config) (*RAGServer, error) {
+func NewRAGServer() (*RAGServer, error) {
+	cfg := config.Get()
+
 	storage, err := storage.Connect(cfg)
 	if err != nil {
 		return nil, err
@@ -28,7 +29,6 @@ func NewRAGServer(cfg *config.Config) (*RAGServer, error) {
 	}, nil)
 
 	ragServer := &RAGServer{
-		config:    cfg,
 		mcpServer: mcpServer,
 		storage:   storage,
 	}
@@ -65,7 +65,7 @@ func (rs *RAGServer) handleSearchTool(
 
 	log.Printf("Search tool called with query=%s, limit=%d", input.Query, input.Limit)
 
-	results, err := handlers.SearchFiles(rs.config, input.Query, input.Limit)
+	results, err := handlers.SearchFiles(input.Query, input.Limit)
 	if err != nil {
 		log.Printf("Search tool error: %v", err)
 		return &mcp.CallToolResult{
