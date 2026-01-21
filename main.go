@@ -20,7 +20,8 @@ var logfile = "rag-mcp-server.log"
 
 func initCmd() *cobra.Command {
 	var (
-		ollamaAddress  string
+		ollamaHost     string
+		ollamaPort     int
 		qdrantHost     string
 		qdrantPort     int
 		collectionName string
@@ -29,9 +30,10 @@ func initCmd() *cobra.Command {
 	var rootCmd = &cobra.Command{
 		Short: "RAG MCP Server",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			ollamaURL := fmt.Sprintf("http://%s:%d", ollamaHost, ollamaPort)
 			config.Initialize(&config.Config{
 				CollectionName: collectionName,
-				OllamaURL:      ollamaAddress,
+				OllamaURL:      ollamaURL,
 				QdrantHost:     qdrantHost,
 				QdrantPort:     qdrantPort,
 				ServerVersion:  strings.TrimSpace(version),
@@ -42,7 +44,8 @@ func initCmd() *cobra.Command {
 		},
 	}
 
-	rootCmd.PersistentFlags().StringVar(&ollamaAddress, "ollamaAddress", "http://localhost:11434", "Ollama server address")
+	rootCmd.PersistentFlags().StringVar(&ollamaHost, "ollamaHost", "localhost", "Ollama server host")
+	rootCmd.PersistentFlags().IntVar(&ollamaPort, "ollamaPort", 11434, "Ollama server port")
 	rootCmd.PersistentFlags().StringVar(&qdrantHost, "qdrantHost", "localhost", "Qdrant server host")
 	rootCmd.PersistentFlags().IntVar(&qdrantPort, "qdrantPort", 6334, "Qdrant server port")
 	rootCmd.PersistentFlags().StringVar(&collectionName, "collection", "my_collection", "Qdrant collection name")
