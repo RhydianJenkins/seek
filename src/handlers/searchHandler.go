@@ -4,11 +4,11 @@ import (
 	"fmt"
 
 	"github.com/rhydianjenkins/rag-mcp-server/src/config"
-	"github.com/rhydianjenkins/rag-mcp-server/src/storage"
+	"github.com/rhydianjenkins/rag-mcp-server/src/db"
 )
 
 func SearchFiles(searchTerm string, limit int) (*SearchResults, error) {
-	storage, err := storage.Connect(config.Get())
+	storage, err := db.Connect(config.Get())
 	if err != nil {
 		return &SearchResults{
 			Success: false,
