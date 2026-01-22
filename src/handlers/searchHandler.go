@@ -3,7 +3,7 @@ package handlers
 import (
 	"fmt"
 
-	"github.com/rhydianjenkins/rag-mcp-server/src/db"
+	"github.com/rhydianjenkins/seek/src/db"
 )
 
 func SearchFiles(searchTerm string, limit int) (*SearchResults, error) {

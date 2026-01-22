@@ -8,15 +8,15 @@ import (
 	"os"
 	"strings"
 
-	"github.com/rhydianjenkins/rag-mcp-server/src/config"
-	"github.com/rhydianjenkins/rag-mcp-server/src/handlers"
-	"github.com/rhydianjenkins/rag-mcp-server/src/mcp"
+	"github.com/rhydianjenkins/seek/src/config"
+	"github.com/rhydianjenkins/seek/src/handlers"
+	"github.com/rhydianjenkins/seek/src/mcp"
 	"github.com/spf13/cobra"
 )
 
 //go:embed VERSION
 var version string
-var logfile = "rag-mcp-server.log"
+var logfile = "seek.log"
 
 func initCmd() *cobra.Command {
 	var (

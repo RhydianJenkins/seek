@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/rhydianjenkins/rag-mcp-server/src/db"
+	"github.com/rhydianjenkins/seek/src/db"
 )
 
 func Status() {

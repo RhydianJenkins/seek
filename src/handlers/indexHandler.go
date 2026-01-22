@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/qdrant/go-client/qdrant"
-	"github.com/rhydianjenkins/rag-mcp-server/src/db"
+	"github.com/rhydianjenkins/seek/src/db"
 )
 
 func chunkText(text string, maxChunkSize int) []string {
