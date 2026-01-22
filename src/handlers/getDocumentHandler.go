@@ -5,7 +5,7 @@ import (
 	"log"
 	"sort"
 
-	"github.com/rhydianjenkins/rag-mcp-server/src/db"
+	"github.com/rhydianjenkins/seek/src/db"
 )
 
 func GetDocumentByFilename(filename string) (*DocumentResult, error) {

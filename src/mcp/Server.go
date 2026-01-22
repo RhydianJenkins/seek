@@ -5,9 +5,9 @@ import (
 	"log"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/rhydianjenkins/rag-mcp-server/src/config"
-	"github.com/rhydianjenkins/rag-mcp-server/src/db"
-	"github.com/rhydianjenkins/rag-mcp-server/src/handlers"
+	"github.com/rhydianjenkins/seek/src/config"
+	"github.com/rhydianjenkins/seek/src/db"
+	"github.com/rhydianjenkins/seek/src/handlers"
 )
 
 type RAGServer struct {

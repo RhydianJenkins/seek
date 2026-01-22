@@ -10,7 +10,7 @@ import (
 	"net/http"
 
 	"github.com/qdrant/go-client/qdrant"
-	"github.com/rhydianjenkins/rag-mcp-server/src/config"
+	"github.com/rhydianjenkins/seek/src/config"
 )
 
 func Connect() (*Storage, error) {

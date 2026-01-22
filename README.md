@@ -30,31 +30,31 @@ go build
 ### Embed Documents
 Generate embeddings for all documents in a directory:
 ```sh
-./rag-mcp-server embed --dataDir test-data --chunkSize 1000
+./seek embed --dataDir test-data --chunkSize 1000
 ```
 
 ### Search Knowledge Base
 Search for documents using natural language:
 ```sh
-./rag-mcp-server search "What is important for me to do this week?" --limit 3
+./seek search "What is important for me to do this week?" --limit 3
 ```
 
 ### Get Document
 Retrieve a complete document by filename:
 ```sh
-./rag-mcp-server get "document.txt"
+./seek get "document.txt"
 ```
 
 ### Check Status
 View the status of your knowledge base:
 ```sh
-./rag-mcp-server status
+./seek status
 ```
 
 ### Run MCP Server
 Start the MCP server for integration with MCP clients:
 ```sh
-./rag-mcp-server mcp
+./seek mcp
 ```
 
 ## MCP Tools

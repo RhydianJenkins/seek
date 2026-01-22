@@ -54,7 +54,7 @@ func applyDefaults(cfg *Config) *Config {
 		cfg.QdrantPort = 6334
 	}
 	if cfg.ServerName == "" {
-		cfg.ServerName = "rag-mcp-server"
+		cfg.ServerName = "seek"
 	}
 	if cfg.ServerVersion == "" {
 		cfg.ServerVersion = "dev"

@@ -1,4 +1,4 @@
-module github.com/rhydianjenkins/rag-mcp-server
+module github.com/rhydianjenkins/seek
 
 go 1.25.5
 

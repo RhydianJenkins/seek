@@ -29,7 +29,7 @@ func TestDefaultConfig(t *testing.T) {
 		{"VectorSize", cfg.VectorSize, uint64(768)},
 		{"OllamaURL", cfg.OllamaURL, "http://localhost:11434"},
 		{"EmbeddingModel", cfg.EmbeddingModel, "nomic-embed-text"},
-		{"ServerName", cfg.ServerName, "rag-mcp-server"},
+		{"ServerName", cfg.ServerName, "seek"},
 		{"ServerVersion", cfg.ServerVersion, "dev"},
 	}
 
