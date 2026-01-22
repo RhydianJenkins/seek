@@ -9,7 +9,6 @@ This is an early prototype and breaking changes are likely.
 - **Semantic Search**: Search your knowledge base using natural language queries with vector embeddings
 - **Document Management**: Index and retrieve complete documents from your knowledge base
 - **MCP Integration**: Full Model Context Protocol support for integration with MCP clients
-- **Status Monitoring**: Check the health and statistics of your vector database
 
 # Getting Started
 
