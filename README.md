@@ -20,6 +20,8 @@ git clone git@github.com:rhydianjenkins/seek && cd seek
 
 ```sh
 go build
+
+# show --help
 ./seek
 ```
 
@@ -29,8 +31,14 @@ go build
 # start ollama and qdrant services
 nix run .#start-services
 
-# run the seek command
-nix run . -- [flags] [command]
+# generate test embeddings
+nix run . -- embed --dataDir test-data
+
+# search for relevant documents
+nix run . -- search "deadlines urgent fixes needed"
+
+# or run the MCP server
+nix run . -- mcp
 ```
 
 ## Commands
