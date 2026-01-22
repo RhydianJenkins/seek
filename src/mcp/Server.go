@@ -47,6 +47,33 @@ func (rs *RAGServer) registerTools() {
 		},
 		rs.handleSearchTool,
 	)
+
+	mcp.AddTool(
+		rs.mcpServer,
+		&mcp.Tool{
+			Name:        "embed",
+			Description: "Generate embeddings for documents in a directory and store them in the knowledge base.",
+		},
+		rs.handleEmbedTool,
+	)
+
+	mcp.AddTool(
+		rs.mcpServer,
+		&mcp.Tool{
+			Name:        "status",
+			Description: "Get the status of the knowledge base database, including collection information and vector count.",
+		},
+		rs.handleStatusTool,
+	)
+
+	mcp.AddTool(
+		rs.mcpServer,
+		&mcp.Tool{
+			Name:        "get_document",
+			Description: "Retrieve a full document by filename, returning all chunks in order.",
+		},
+		rs.handleGetDocumentTool,
+	)
 }
 
 type SearchToolInput struct {
@@ -78,6 +105,87 @@ func (rs *RAGServer) handleSearchTool(
 	return &mcp.CallToolResult{
 		IsError: false,
 	}, results, nil
+}
+
+type EmbedToolInput struct {
+	DataDir   string `json:"dataDir" jsonschema:"required" jsonschema_description:"Directory containing .txt files to embed"`
+	ChunkSize int    `json:"chunkSize" jsonschema_description:"Maximum chunk size in characters for splitting text (default: 1000)"`
+}
+
+func (rs *RAGServer) handleEmbedTool(
+	ctx context.Context,
+	req *mcp.CallToolRequest,
+	input EmbedToolInput,
+) (*mcp.CallToolResult, *handlers.IndexResult, error) {
+	if input.ChunkSize == 0 {
+		input.ChunkSize = 1000
+	}
+
+	log.Printf("Embed tool called with dataDir=%s, chunkSize=%d", input.DataDir, input.ChunkSize)
+
+	results, err := handlers.IndexFiles(input.DataDir, input.ChunkSize)
+	if err != nil {
+		log.Printf("Embed tool error: %v", err)
+		return &mcp.CallToolResult{
+			IsError: true,
+		}, results, err
+	}
+
+	log.Printf("Embed tool completed: %d files processed, %d chunks created", results.FilesIndexed, results.TotalChunks)
+
+	return &mcp.CallToolResult{
+		IsError: false,
+	}, results, nil
+}
+
+type StatusToolInput struct{}
+
+func (rs *RAGServer) handleStatusTool(
+	ctx context.Context,
+	req *mcp.CallToolRequest,
+	input StatusToolInput,
+) (*mcp.CallToolResult, *db.CollectionStatus, error) {
+	log.Println("Status tool called")
+
+	status, err := rs.storage.GetStatus()
+	if err != nil {
+		log.Printf("Status tool error: %v", err)
+		return &mcp.CallToolResult{
+			IsError: true,
+		}, status, err
+	}
+
+	log.Printf("Status tool completed: collection=%s, exists=%v, count=%d", status.CollectionName, status.Exists, status.VectorCount)
+
+	return &mcp.CallToolResult{
+		IsError: false,
+	}, status, nil
+}
+
+type GetDocumentToolInput struct {
+	Filename string `json:"filename" jsonschema:"required" jsonschema_description:"The filename of the document to retrieve"`
+}
+
+func (rs *RAGServer) handleGetDocumentTool(
+	ctx context.Context,
+	req *mcp.CallToolRequest,
+	input GetDocumentToolInput,
+) (*mcp.CallToolResult, *handlers.DocumentResult, error) {
+	log.Printf("Get document tool called with filename=%s", input.Filename)
+
+	result, err := handlers.GetDocumentByFilename(input.Filename)
+	if err != nil {
+		log.Printf("Get document tool error: %v", err)
+		return &mcp.CallToolResult{
+			IsError: true,
+		}, result, err
+	}
+
+	log.Printf("Get document tool completed: filename=%s, chunks=%d", result.Filename, result.ChunkCount)
+
+	return &mcp.CallToolResult{
+		IsError: false,
+	}, result, nil
 }
 
 func (rs *RAGServer) Run(ctx context.Context) error {

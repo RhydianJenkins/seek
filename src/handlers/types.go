@@ -22,3 +22,17 @@ type SearchResults struct {
 	Count   int            `json:"count"`
 	Error   string         `json:"error,omitempty"`
 }
+
+type DocumentChunk struct {
+	ChunkIndex int64  `json:"chunk_index"`
+	Content    string `json:"content"`
+}
+
+type DocumentResult struct {
+	Success    bool            `json:"success"`
+	Filename   string          `json:"filename"`
+	ChunkCount int             `json:"chunk_count"`
+	Chunks     []DocumentChunk `json:"chunks"`
+	FullText   string          `json:"full_text"`
+	Error      string          `json:"error,omitempty"`
+}

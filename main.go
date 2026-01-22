@@ -52,18 +52,18 @@ func initCmd() *cobra.Command {
 
 	var dataDir string
 	var chunkSize int
-	var indexCmd = &cobra.Command{
-		Use:   "index",
-		Short: "Index the knowledge base",
+	var embedCmd = &cobra.Command{
+		Use:   "embed",
+		Short: "Generate embeddings for the knowledge base",
 		Args:  cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
 			handlers.Index(dataDir, chunkSize)
 		},
 	}
-	indexCmd.Flags().StringVar(&dataDir, "dataDir", "", "Directory containing .txt files to index (required)")
-	indexCmd.Flags().IntVar(&chunkSize, "chunkSize", 1000, "Maximum chunk size in characters for splitting text")
-	indexCmd.MarkFlagRequired("dataDir")
-	rootCmd.AddCommand(indexCmd)
+	embedCmd.Flags().StringVar(&dataDir, "dataDir", "", "Directory containing .txt files to embed (required)")
+	embedCmd.Flags().IntVar(&chunkSize, "chunkSize", 1000, "Maximum chunk size in characters for splitting text")
+	embedCmd.MarkFlagRequired("dataDir")
+	rootCmd.AddCommand(embedCmd)
 
 	var limit int
 	var searchCmd = &cobra.Command{
@@ -78,6 +78,27 @@ func initCmd() *cobra.Command {
 	searchCmd.Flags().IntVar(&limit, "limit", 3, "Maximum number of search results to return")
 	rootCmd.AddCommand(searchCmd)
 
+	var getCmd = &cobra.Command{
+		Use:   "get",
+		Short: "Get a full document by filename",
+		Args:  cobra.ExactArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			filename := args[0]
+			handlers.GetDocument(filename)
+		},
+	}
+	rootCmd.AddCommand(getCmd)
+
+	var statusCmd = &cobra.Command{
+		Use:   "status",
+		Short: "Show the status of the database",
+		Args:  cobra.ExactArgs(0),
+		Run: func(cmd *cobra.Command, args []string) {
+			handlers.Status()
+		},
+	}
+	rootCmd.AddCommand(statusCmd)
+
 	var versionCmd = &cobra.Command{
 		Use:   "version",
 		Short: "Print the version number",
@@ -88,8 +109,8 @@ func initCmd() *cobra.Command {
 	}
 	rootCmd.AddCommand(versionCmd)
 
-	var runCmd = &cobra.Command{
-		Use:   "run",
+	var mcpCmd = &cobra.Command{
+		Use:   "mcp",
 		Short: "Run the MCP server over stdio",
 		Long:  "Starts the MCP server using stdio transport for integration with MCP clients",
 		Args:  cobra.ExactArgs(0),
@@ -112,7 +133,7 @@ func initCmd() *cobra.Command {
 			}
 		},
 	}
-	rootCmd.AddCommand(runCmd)
+	rootCmd.AddCommand(mcpCmd)
 
 	return rootCmd
 }

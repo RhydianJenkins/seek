@@ -18,3 +18,10 @@ type ollamaEmbedRequest struct {
 type ollamaEmbedResponse struct {
 	Embedding []float32 `json:"embedding"`
 }
+
+type CollectionStatus struct {
+	CollectionName string `json:"collection_name"`
+	Exists         bool   `json:"exists"`
+	VectorCount    uint64 `json:"vector_count,omitempty"`
+	VectorSize     uint64 `json:"vector_size,omitempty"`
+}

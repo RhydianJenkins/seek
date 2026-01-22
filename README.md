@@ -1,29 +1,78 @@
-MCP Server for Retrieval-Augmented Generation (RAG)
+MCP Server for Retrieval-Augmented Generation (RAG).
+
+Search through a given knowledge base for relevant information using embedded natural language.
+
+This is an early prototype and breaking changes are likely.
+
+## Features
+
+- **Semantic Search**: Search your knowledge base using natural language queries with vector embeddings
+- **Document Management**: Index and retrieve complete documents from your knowledge base
+- **MCP Integration**: Full Model Context Protocol support for integration with MCP clients
+- **Status Monitoring**: Check the health and statistics of your vector database
 
 # Getting Started
 
-With [Nix](https://nixos.org/download), you can start the services by doing:
+## Nix
 
 ```sh
-nix run # start services
+# start ollama and qdrant services
+nix run
+
+# enter dev shell with all dependencies
+nix develop
+
+# build the project
+go build
 ```
 
-Then, enter a dev shell with:
+## Commands
 
+### Embed Documents
+Generate embeddings for all documents in a directory:
 ```sh
-nix develop # enter dev shell with all dependencies
-go run main.go # print help information
+./rag-mcp-server embed --dataDir test-data --chunkSize 1000
 ```
 
-You will then need to index some knowledge bases.
-For example, you can index the test emails in this repository:
-
+### Search Knowledge Base
+Search for documents using natural language:
 ```sh
-go run . index --dataDir test-data/emails
+./rag-mcp-server search "What is important for me to do this week?" --limit 3
 ```
 
-Then you can run a search the knowledge base
-
+### Get Document
+Retrieve a complete document by filename:
 ```sh
-go run . search "is there any deadlines coming up?"
+./rag-mcp-server get "document.txt"
 ```
+
+### Check Status
+View the status of your knowledge base:
+```sh
+./rag-mcp-server status
+```
+
+### Run MCP Server
+Start the MCP server for integration with MCP clients:
+```sh
+./rag-mcp-server mcp
+```
+
+## MCP Tools
+
+When running as an MCP server, the following tools are available:
+
+- `search` - Search the knowledge base using semantic similarity
+- `embed` - Generate embeddings for documents in a directory
+- `get_document` - Retrieve a full document by filename
+- `status` - Get database status and statistics
+
+## Configuration
+
+Configure the server using command-line flags:
+
+- `--ollamaHost` - Ollama server host (default: localhost)
+- `--ollamaPort` - Ollama server port (default: 11434)
+- `--qdrantHost` - Qdrant server host (default: localhost)
+- `--qdrantPort` - Qdrant server port (default: 6334)
+- `--collection` - Qdrant collection name (default: my_collection)

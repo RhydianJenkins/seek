@@ -132,3 +132,73 @@ func (storage *Storage) Search(searchTerm string, limit int) ([]*qdrant.ScoredPo
 
 	return searchResult, nil
 }
+
+func (storage *Storage) GetStatus() (*CollectionStatus, error) {
+	exists, err := storage.client.CollectionExists(context.Background(), storage.collectionName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check collection existence: %w", err)
+	}
+
+	if !exists {
+		return &CollectionStatus{
+			CollectionName: storage.collectionName,
+			Exists:         false,
+		}, nil
+	}
+
+	collectionInfo, err := storage.client.GetCollectionInfo(context.Background(), storage.collectionName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get collection info: %w", err)
+	}
+
+	return &CollectionStatus{
+		CollectionName: storage.collectionName,
+		Exists:         true,
+		VectorCount:    collectionInfo.GetPointsCount(),
+		VectorSize:     storage.vectorSize,
+	}, nil
+}
+
+func (storage *Storage) GetDocumentByFilename(filename string) ([]*qdrant.ScoredPoint, error) {
+	filter := &qdrant.Filter{
+		Must: []*qdrant.Condition{
+			{
+				ConditionOneOf: &qdrant.Condition_Field{
+					Field: &qdrant.FieldCondition{
+						Key: "filename",
+						Match: &qdrant.Match{
+							MatchValue: &qdrant.Match_Keyword{
+								Keyword: filename,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	scrollResult, err := storage.client.Scroll(
+		context.Background(),
+		&qdrant.ScrollPoints{
+			CollectionName: storage.collectionName,
+			Filter:         filter,
+			WithPayload:    qdrant.NewWithPayload(true),
+			Limit:          qdrant.PtrOf(uint32(1000)),
+		},
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to scroll documents: %w", err)
+	}
+
+	scoredPoints := make([]*qdrant.ScoredPoint, len(scrollResult))
+	for i, point := range scrollResult {
+		scoredPoints[i] = &qdrant.ScoredPoint{
+			Id:      point.Id,
+			Payload: point.Payload,
+			Score:   1.0,
+		}
+	}
+
+	return scoredPoints, nil
+}
