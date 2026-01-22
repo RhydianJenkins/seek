@@ -10,7 +10,7 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        version = builtins.readFile ./VERSION;
+        version = pkgs.lib.trim (builtins.readFile ./VERSION);
       in
       {
         packages = {
