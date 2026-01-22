@@ -1,0 +1,76 @@
+From: alex.tanaka@webapp.io
+To: support@cloudplatform.io
+Date: 2024-01-20 10:15:33
+Subject: CORS preflight requests failing from browser
+
+Hello,
+
+We're building a single-page app that calls your API directly from the browser, but we're getting CORS errors on all requests:
+
+"Access to fetch at 'https://api.cloudplatform.io/v1/data' from origin 'https://app.webapp.io' has been blocked by CORS policy: Response to preflight request doesn't pass access control check"
+
+We've added our domain to the CORS whitelist in the dashboard settings. What else do we need to configure?
+
+Alex Tanaka
+Frontend Developer
+
+---
+
+From: support@cloudplatform.io
+To: alex.tanaka@webapp.io
+Date: 2024-01-20 12:44:16
+Subject: Re: CORS preflight requests failing from browser
+
+Hi Alex,
+
+I see your domain in the CORS configuration. The issue is that you're sending custom headers that require additional CORS setup.
+
+Your requests include: "X-API-Key" and "X-Request-ID"
+
+You need to add these to "Allowed Headers" in your CORS settings:
+Dashboard → Settings → API → CORS Configuration → Allowed Headers
+
+By default, only standard headers (Authorization, Content-Type) are permitted.
+
+Let me know if you need help finding this setting.
+
+Best,
+Nina Patel
+Support Engineer
+
+---
+
+From: alex.tanaka@webapp.io
+To: support@cloudplatform.io
+Date: 2024-01-20 14:22:47
+Subject: Re: CORS preflight requests failing from browser
+
+Nina,
+
+Found it! I added both headers and now it's working.
+
+Quick follow-up: Is it safe to call your API directly from the browser, or should we proxy through our backend? We're concerned about exposing our API key.
+
+Alex
+
+---
+
+From: support@cloudplatform.io
+To: alex.tanaka@webapp.io
+Date: 2024-01-20 15:37:55
+Subject: Re: CORS preflight requests failing from browser
+
+Hi Alex,
+
+Great question. For production, we strongly recommend proxying through your backend. Here's why:
+
+1. API keys in browser code can be extracted by users
+2. You can't enforce rate limiting per user (all requests share one key)
+3. Users can see all API request details
+
+Best practice: Use your backend to authenticate users, then have it make API calls with your secure key.
+
+Alternatively, check out our "Public API Keys" feature (Beta) which creates restricted, domain-locked keys safe for browser use.
+
+Best,
+Nina

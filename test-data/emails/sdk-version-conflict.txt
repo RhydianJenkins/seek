@@ -1,0 +1,84 @@
+From: robert.chang@platform.dev
+To: support@cloudplatform.io
+Date: 2024-02-25 09:48:22
+Subject: Node.js SDK throwing type errors after upgrade
+
+Support,
+
+We upgraded from @cloudplatform/sdk v2.4.1 to v2.5.0 and now we're getting TypeScript errors:
+
+"Property 'metadata' does not exist on type 'User'"
+
+The types are completely broken. We had to rollback to v2.4.1.
+
+Is this a known issue with v2.5.0?
+
+Robert Chang
+Senior Developer
+
+---
+
+From: support@cloudplatform.io
+To: robert.chang@platform.dev
+Date: 2024-02-25 11:33:47
+Subject: Re: Node.js SDK throwing type errors after upgrade
+
+Hi Robert,
+
+Thank you for reporting this. Version 2.5.0 updated our TypeScript definitions to match our API spec more precisely. The 'metadata' field was incorrectly included in the type definitions in v2.4.1.
+
+In v2.5.0:
+- User.metadata was removed (never actually returned by API)
+- User.customFields was added (the correct field name)
+
+If your code relies on 'metadata', you'll need to update to 'customFields'. This was documented in our v2.5.0 release notes, but I understand the migration could be smoother.
+
+Do you need help migrating your code?
+
+Best regards,
+Kevin Foster
+SDK Support Team
+
+---
+
+From: robert.chang@platform.dev
+To: support@cloudplatform.io
+Date: 2024-02-25 13:15:56
+Subject: Re: Node.js SDK throwing type errors after upgrade
+
+Kevin,
+
+Wait - we ARE receiving a metadata field from the API in our responses. Let me send you an example:
+
+```json
+{
+  "id": "usr_123",
+  "email": "test@example.com",
+  "metadata": {
+    "signup_source": "web"
+  }
+}
+```
+
+So the field exists, but the types say it doesn't?
+
+Robert
+
+---
+
+From: support@cloudplatform.io
+To: robert.chang@platform.dev
+Date: 2024-02-25 15:42:33
+Subject: Re: Node.js SDK throwing type errors after upgrade
+
+Hi Robert,
+
+You're absolutely right - my apologies for the confusion. I've escalated this to our SDK team. It appears the type definitions were incorrectly updated.
+
+We're releasing v2.5.1 within the next few hours that reverts the type changes while we sort this out properly.
+
+For now, please stay on v2.4.1. I'll notify you when v2.5.1 is available.
+
+Sorry for the trouble.
+
+Kevin

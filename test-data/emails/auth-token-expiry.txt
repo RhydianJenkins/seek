@@ -1,0 +1,62 @@
+From: sarah.jenkins@acmecorp.com
+To: support@cloudplatform.io
+Date: 2024-01-15 09:23:45
+Subject: API Authentication Tokens Expiring Too Quickly
+
+Hi Support Team,
+
+We're experiencing issues with our integration where API tokens seem to be expiring much faster than the documented 24-hour lifetime. Our application is receiving 401 errors approximately every 2-3 hours, forcing us to re-authenticate constantly.
+
+This is causing disruption to our automated workflows. Could you please investigate?
+
+Thanks,
+Sarah Jenkins
+Senior Developer, Acme Corp
+
+---
+
+From: support@cloudplatform.io
+To: sarah.jenkins@acmecorp.com
+Date: 2024-01-15 11:47:22
+Subject: Re: API Authentication Tokens Expiring Too Quickly
+
+Hi Sarah,
+
+Thank you for reaching out. I've reviewed your account's API usage logs. The token expiry is actually working as designed, but I notice you're using the "Standard" tier tokens which have a 3-hour lifetime, not 24 hours.
+
+The 24-hour lifetime is available on our "Professional" tier and above. Would you like information about upgrading your plan?
+
+Best regards,
+Marcus Chen
+Support Engineer
+
+---
+
+From: sarah.jenkins@acmecorp.com
+To: support@cloudplatform.io
+Date: 2024-01-15 14:12:03
+Subject: Re: API Authentication Tokens Expiring Too Quickly
+
+Hi Marcus,
+
+That explains it - our documentation must be outdated. For now, we'll adjust our refresh logic to handle 3-hour expiry. I'll discuss the upgrade with our team.
+
+One follow-up: is there a specific error code we should watch for to detect token expiry vs other auth failures?
+
+Sarah
+
+---
+
+From: support@cloudplatform.io
+To: sarah.jenkins@acmecorp.com
+Date: 2024-01-15 15:33:18
+Subject: Re: API Authentication Tokens Expiring Too Quickly
+
+Hi Sarah,
+
+Yes! Token expiry returns a 401 with error code "TOKEN_EXPIRED". Invalid tokens return "INVALID_TOKEN" and insufficient permissions return "FORBIDDEN".
+
+Check the "X-Error-Code" header in the response for the specific code.
+
+Best,
+Marcus

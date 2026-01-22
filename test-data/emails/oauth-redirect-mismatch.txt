@@ -1,0 +1,81 @@
+From: stephanie.brown@connector.app
+To: support@cloudplatform.io
+Date: 2024-02-10 12:18:56
+Subject: OAuth flow failing with redirect_uri_mismatch error
+
+Hello,
+
+We're implementing OAuth2 authentication for our integration, but users are getting an error during the authorization step:
+
+"Error: redirect_uri_mismatch
+The redirect URI in the request does not match the registered redirect URIs"
+
+Our redirect URI: https://app.connector.app/oauth/callback
+Registered URI: https://app.connector.app/oauth/callback
+
+They look identical to me. What's wrong?
+
+Stephanie Brown
+Backend Engineer
+
+---
+
+From: support@cloudplatform.io
+To: stephanie.brown@connector.app
+Date: 2024-02-10 14:35:21
+Subject: Re: OAuth flow failing with redirect_uri_mismatch error
+
+Hi Stephanie,
+
+I found the issue. In your OAuth application settings, the registered redirect URI is:
+
+https://app.connector.app/oauth/callback/
+
+Note the trailing slash. OAuth redirect URIs must match exactly, character for character. Either:
+
+1. Update your registered URI to remove the trailing slash, OR
+2. Update your application code to include the trailing slash
+
+I recommend option 1. You can update this in:
+Dashboard → Applications → OAuth Settings → Redirect URIs
+
+Best,
+Daniel Lee
+Support Engineer
+
+---
+
+From: stephanie.brown@connector.app
+To: support@cloudplatform.io
+Date: 2024-02-10 15:22:14
+Subject: Re: OAuth flow failing with redirect_uri_mismatch error
+
+Daniel,
+
+Fixed! I removed the trailing slash and it's working now.
+
+One more question: can we register multiple redirect URIs? We have separate staging and production environments.
+
+Stephanie
+
+---
+
+From: support@cloudplatform.io
+To: stephanie.brown@connector.app
+Date: 2024-02-10 16:47:38
+Subject: Re: OAuth flow failing with redirect_uri_mismatch error
+
+Hi Stephanie,
+
+Yes! You can register up to 10 redirect URIs per OAuth application. Just add each one on a separate line:
+
+https://app.connector.app/oauth/callback
+https://staging.connector.app/oauth/callback
+http://localhost:3000/oauth/callback
+
+Your application specifies which one to use in the authorization request via the redirect_uri parameter.
+
+Note: We allow http://localhost for development, but all production URIs must use https.
+
+Best,
+Daniel

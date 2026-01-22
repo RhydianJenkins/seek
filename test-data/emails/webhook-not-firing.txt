@@ -1,0 +1,66 @@
+From: david.park@techstartup.io
+To: support@cloudplatform.io
+Date: 2024-02-03 16:45:12
+Subject: Webhooks not triggering for user.created events
+
+Hello,
+
+We set up a webhook endpoint last week to receive user.created events, but we're not receiving any notifications even though we can see new users being created through the dashboard.
+
+Our endpoint: https://api.techstartup.io/webhooks/cloudplatform
+Event subscription: user.created
+
+Can you help troubleshoot this?
+
+David Park
+Lead Engineer
+
+---
+
+From: support@cloudplatform.io
+To: david.park@techstartup.io
+Date: 2024-02-03 18:22:47
+Subject: Re: Webhooks not triggering for user.created events
+
+Hi David,
+
+I've checked your webhook configuration and I can see the issue. Our system has been trying to deliver events to your endpoint, but we're receiving SSL certificate errors (ERR_CERT_COMMON_NAME_INVALID).
+
+Your endpoint is using a certificate for "*.techstartup.com" but the webhook URL uses "techstartup.io" domain. The domain mismatch is causing our delivery system to reject the connection.
+
+Could you either update the endpoint URL or fix the SSL certificate?
+
+Best,
+Jennifer Rodriguez
+Support Engineer
+
+---
+
+From: david.park@techstartup.io
+To: support@cloudplatform.io
+Date: 2024-02-04 09:15:33
+Subject: Re: Webhooks not triggering for user.created events
+
+Jennifer,
+
+Good catch! I've updated the webhook URL to https://api.techstartup.com/webhooks/cloudplatform
+
+Can you retry the delivery or do I need to recreate the webhook?
+
+David
+
+---
+
+From: support@cloudplatform.io
+To: david.park@techstartup.io
+Date: 2024-02-04 10:03:21
+Subject: Re: Webhooks not triggering for user.created events
+
+Hi David,
+
+No need to recreate! I've manually triggered a test event and it delivered successfully. Your webhook is now active and you should start receiving events normally.
+
+Note: We don't automatically retry events that failed during the configuration phase, so you won't receive notifications for users created between Feb 3-4.
+
+Best,
+Jennifer

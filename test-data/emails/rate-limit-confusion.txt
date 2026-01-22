@@ -1,0 +1,80 @@
+From: michael.oconnor@datasync.com
+To: support@cloudplatform.io
+Date: 2024-03-12 08:34:56
+Subject: Getting rate limited despite being well under quota
+
+Support,
+
+Our application is being rate limited (HTTP 429) even though we're only making about 300 requests per hour. According to our plan documentation, we should have 10,000 requests per hour.
+
+What's going on?
+
+Michael O'Connor
+CTO, DataSync
+
+---
+
+From: support@cloudplatform.io
+To: michael.oconnor@datasync.com
+Date: 2024-03-12 10:15:44
+Subject: Re: Getting rate limited despite being well under quota
+
+Hi Michael,
+
+I've analyzed your API traffic patterns. The rate limit you're hitting is actually our per-second burst limit, not the hourly quota.
+
+Your plan includes:
+- 10,000 requests per hour (total quota)
+- 100 requests per second (burst limit)
+
+Looking at your logs, your application is sending batches of ~200 requests simultaneously every few minutes, which exceeds the burst limit even though your hourly total is fine.
+
+You can either:
+1. Implement request spreading to stay under 100 req/sec
+2. Upgrade to a plan with higher burst limits (500 req/sec)
+
+Would you like help implementing exponential backoff?
+
+Regards,
+Priya Sharma
+Senior Support Engineer
+
+---
+
+From: michael.oconnor@datasync.com
+To: support@cloudplatform.io
+Date: 2024-03-12 11:42:18
+Subject: Re: Getting rate limited despite being well under quota
+
+Priya,
+
+That makes sense. The burst limit wasn't clearly documented in the pricing page we looked at.
+
+We'll implement request queuing on our end. Do you recommend any specific backoff strategy?
+
+Michael
+
+---
+
+From: support@cloudplatform.io
+To: michael.oconnor@datasync.com
+Date: 2024-03-12 13:28:03
+Subject: Re: Getting rate limited despite being well under quota
+
+Hi Michael,
+
+We recommend exponential backoff with jitter. When you receive a 429, the response includes a "Retry-After" header (in seconds) that tells you exactly when to retry.
+
+Sample pseudocode:
+```
+if (response.status === 429) {
+  wait = response.headers['Retry-After'] || 1
+  sleep(wait + random(0, 1))
+  retry()
+}
+```
+
+Also, check the "X-RateLimit-Remaining" header to proactively slow down before hitting the limit.
+
+Best,
+Priya

@@ -1,0 +1,76 @@
+From: lisa.kowalski@fintech.app
+To: support@cloudplatform.io
+Date: 2024-02-18 11:07:29
+Subject: URGENT: Date format changed breaking our integration
+
+Support Team,
+
+Our production integration broke this morning. The API is now returning dates in a different format than before.
+
+Previously: "2024-02-18T11:07:29Z"
+Now: "2024-02-18T11:07:29.123Z"
+
+Our date parser doesn't handle milliseconds and we're getting errors across the system. This is affecting thousands of users.
+
+Was this an intentional API change? We didn't receive any deprecation notice.
+
+Lisa Kowalski
+Engineering Manager, FinTech App
+
+---
+
+From: support@cloudplatform.io
+To: lisa.kowalski@fintech.app
+Date: 2024-02-18 11:34:52
+Subject: Re: URGENT: Date format changed breaking our integration
+
+Hi Lisa,
+
+I apologize for the disruption. We deployed a backend update this morning that standardized timestamp precision across all endpoints. This should have been backwards compatible as both formats are valid ISO 8601.
+
+However, I understand this is breaking your integration. As an immediate workaround, you can add the header "X-API-Version: 2023-12" to your requests to get the old format while you update your parser.
+
+We'll also update our changelog to reflect this change more clearly.
+
+Priority escalated to our engineering team.
+
+Carlos Martinez
+Senior Support Engineer
+
+---
+
+From: lisa.kowalski@fintech.app
+To: support@cloudplatform.io
+Date: 2024-02-18 12:15:43
+Subject: Re: URGENT: Date format changed breaking our integration
+
+Carlos,
+
+The X-API-Version header worked, thank you. That gives us breathing room.
+
+However, I want to emphasize that breaking changes like this need better communication. Even if it's "technically" backwards compatible, real-world integrations have constraints.
+
+Can you share your API versioning and deprecation policy?
+
+Lisa
+
+---
+
+From: support@cloudplatform.io
+To: lisa.kowalski@fintech.app
+Date: 2024-02-18 14:48:16
+Subject: Re: URGENT: Date format changed breaking our integration
+
+Hi Lisa,
+
+You're absolutely right, and I've passed your feedback to our product team. We're implementing a new policy:
+
+1. All format changes will be announced 30 days in advance
+2. Breaking changes will only happen during major version updates
+3. We'll maintain version headers for 12 months after deprecation
+
+I've added your email to our API changelog distribution list. You'll receive advance notice of all future changes.
+
+Again, sorry for the disruption.
+
+Carlos

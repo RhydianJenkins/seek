@@ -1,0 +1,71 @@
+From: emma.williams@retailops.net
+To: support@cloudplatform.io
+Date: 2024-01-28 14:22:37
+Subject: Significant delay in data synchronization
+
+Hi there,
+
+We're seeing a 15-20 minute delay between when we create records via the API and when they appear in queries. This is causing major issues for our real-time inventory system.
+
+Is there scheduled maintenance or an outage we should know about?
+
+Emma Williams
+Integration Specialist, RetailOps
+
+---
+
+From: support@cloudplatform.io
+To: emma.williams@retailops.net
+Date: 2024-01-28 15:45:21
+Subject: Re: Significant delay in data synchronization
+
+Hi Emma,
+
+There's no outage on our end. I need to clarify how our API works:
+
+- Write operations (POST/PUT/DELETE) are immediately consistent
+- However, our search/query API uses read replicas that sync every 15 minutes
+
+If you need immediate read-after-write consistency, you should either:
+1. Use the direct GET /items/{id} endpoint (always reads from primary)
+2. Add the header "X-Read-Consistency: strong" to your queries (available on Pro tier+)
+
+Are you currently using our search API for inventory lookups?
+
+Best regards,
+Tom Anderson
+Support Engineer
+
+---
+
+From: emma.williams@retailops.net
+To: support@cloudplatform.io
+Date: 2024-01-28 16:33:14
+Subject: Re: Significant delay in data synchronization
+
+Tom,
+
+Yes, we're using GET /items/search because we need to filter by multiple criteria. We're on the Standard tier currently.
+
+Would upgrading to Pro solve this? What's the performance impact of strong consistency?
+
+Emma
+
+---
+
+From: support@cloudplatform.io
+To: emma.williams@retailops.net
+Date: 2024-01-29 09:12:05
+Subject: Re: Significant delay in data synchronization
+
+Hi Emma,
+
+Strong consistency reads are typically 50-100ms slower than eventually consistent reads, but you get real-time data. For an inventory system, this is usually worth it.
+
+Pro tier is $299/month and includes strong consistency mode plus higher rate limits.
+
+Alternatively, if you're just checking stock for specific SKUs after updates, you could cache the item IDs from your write operations and use direct GET requests.
+
+Let me know which direction works better for your use case.
+
+Tom

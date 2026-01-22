@@ -1,0 +1,84 @@
+From: james.reed@analytics.co
+To: support@cloudplatform.io
+Date: 2024-03-05 13:42:17
+Subject: Pagination returning duplicate records
+
+Hi,
+
+We're implementing a full data sync using your pagination API, but we're seeing duplicate records across pages. Sometimes the same record appears on page 3 and page 5.
+
+We're using:
+GET /api/v1/customers?page=1&per_page=100
+
+Is this a known issue?
+
+James Reed
+Data Engineer
+
+---
+
+From: support@cloudplatform.io
+To: james.reed@analytics.co
+Date: 2024-03-05 15:18:44
+Subject: Re: Pagination returning duplicate records
+
+Hi James,
+
+This is expected behavior with offset-based pagination when records are being created/modified during your sync process. As new records are inserted, they shift the offset calculations, causing duplicates or skips.
+
+For data synchronization, you should use cursor-based pagination instead:
+
+GET /api/v1/customers?cursor={token}&limit=100
+
+The first request omits the cursor parameter. Each response includes a "next_cursor" field to use in subsequent requests. This guarantees consistent iteration even as data changes.
+
+Would you like an example implementation?
+
+Best,
+Rachel Kim
+Support Engineer
+
+---
+
+From: james.reed@analytics.co
+To: support@cloudplatform.io
+Date: 2024-03-05 16:34:22
+Subject: Re: Pagination returning duplicate records
+
+Rachel,
+
+Yes, an example would be helpful. Also, can we sort the cursor-based results? We need them ordered by created_at timestamp.
+
+James
+
+---
+
+From: support@cloudplatform.io
+To: james.reed@analytics.co
+Date: 2024-03-05 17:52:09
+Subject: Re: Pagination returning duplicate records
+
+Hi James,
+
+Yes, cursors support sorting:
+
+GET /api/v1/customers?limit=100&sort=created_at:asc
+
+Example iteration:
+```
+cursor = null
+all_records = []
+
+while (true) {
+  response = api.get('/customers', { cursor, limit: 100 })
+  all_records.extend(response.data)
+
+  if (!response.next_cursor) break
+  cursor = response.next_cursor
+}
+```
+
+The cursor is opaque (encoded position), so you can't manually construct it. Always use the next_cursor from the response.
+
+Best,
+Rachel
