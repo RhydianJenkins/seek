@@ -47,6 +47,19 @@ seek --ollamaHost your.ollama.host \
 </details>
 
 <details>
+<summary>Install Globally</summary>
+
+Install the binary globally on your system using Go:
+```sh
+go install github.com/rhydianjenkins/seek@latest
+seek --help
+```
+
+Make sure `$GOPATH/bin` (usually `~/go/bin`) is in your PATH.
+
+</details>
+
+<details>
 <summary>Build from Source</summary>
 
 ```sh
