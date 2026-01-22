@@ -54,7 +54,7 @@
             echo "Qdrant version: $(qdrant --version)"
             echo "Ollama version: $(ollama --version)"
             echo ""
-            echo "To start all services, run 'nix run'"
+            echo "To start all services, do 'nix run .#start-services'"
           '';
         };
       }

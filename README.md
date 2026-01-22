@@ -12,17 +12,25 @@ This is an early prototype and breaking changes are likely.
 
 # Getting Started
 
-## Nix
+```sh
+git clone git@github.com:rhydianjenkins/seek && cd seek
+```
+
+## then build from source
+
+```sh
+go build
+./seek
+```
+
+## or with Nix
 
 ```sh
 # start ollama and qdrant services
-nix run
+nix run .#start-services
 
-# enter dev shell with all dependencies
-nix develop
-
-# build the project
-go build
+# run the seek command
+nix run . -- [flags] [command]
 ```
 
 ## Commands
