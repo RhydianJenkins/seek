@@ -1,8 +1,8 @@
 package mcp
 
 import (
-	"github.com/rhydianjenkins/seek/src/db"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/rhydianjenkins/seek/src/db"
 )
 
 type RAGServer struct {
