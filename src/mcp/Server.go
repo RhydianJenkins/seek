@@ -10,11 +10,6 @@ import (
 	"github.com/rhydianjenkins/seek/src/handlers"
 )
 
-type RAGServer struct {
-	mcpServer *mcp.Server
-	storage   *db.Storage
-}
-
 func NewRAGServer() (*RAGServer, error) {
 	cfg := config.Get()
 
@@ -76,11 +71,6 @@ func (rs *RAGServer) registerTools() {
 	)
 }
 
-type SearchToolInput struct {
-	Query string `json:"query" jsonschema:"required" jsonschema_description:"Search query text"`
-	Limit int    `json:"limit" jsonschema_description:"Maximum number of results to return (default: 3)"`
-}
-
 func (rs *RAGServer) handleSearchTool(
 	ctx context.Context,
 	req *mcp.CallToolRequest,
@@ -105,11 +95,6 @@ func (rs *RAGServer) handleSearchTool(
 	return &mcp.CallToolResult{
 		IsError: false,
 	}, results, nil
-}
-
-type EmbedToolInput struct {
-	DataDir   string `json:"dataDir" jsonschema:"required" jsonschema_description:"Directory containing .txt files to embed"`
-	ChunkSize int    `json:"chunkSize" jsonschema_description:"Maximum chunk size in characters for splitting text (default: 1000)"`
 }
 
 func (rs *RAGServer) handleEmbedTool(
@@ -138,8 +123,6 @@ func (rs *RAGServer) handleEmbedTool(
 	}, results, nil
 }
 
-type StatusToolInput struct{}
-
 func (rs *RAGServer) handleStatusTool(
 	ctx context.Context,
 	req *mcp.CallToolRequest,
@@ -160,10 +143,6 @@ func (rs *RAGServer) handleStatusTool(
 	return &mcp.CallToolResult{
 		IsError: false,
 	}, status, nil
-}
-
-type GetDocumentToolInput struct {
-	Filename string `json:"filename" jsonschema:"required" jsonschema_description:"The filename of the document to retrieve"`
 }
 
 func (rs *RAGServer) handleGetDocumentTool(
