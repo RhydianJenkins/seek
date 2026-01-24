@@ -6,7 +6,6 @@ import (
 )
 
 func TestDefaultConfig(t *testing.T) {
-	// Reset instance for testing
 	instance = nil
 	once = sync.Once{}
 
@@ -19,8 +18,8 @@ func TestDefaultConfig(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		got      interface{}
-		expected interface{}
+		got      any
+		expected any
 	}{
 		{"QdrantHost", cfg.QdrantHost, "localhost"},
 		{"QdrantPort", cfg.QdrantPort, 6334},
@@ -43,7 +42,6 @@ func TestDefaultConfig(t *testing.T) {
 }
 
 func TestCustomConfig(t *testing.T) {
-	// Reset instance for testing
 	instance = nil
 	once = sync.Once{}
 
@@ -58,8 +56,8 @@ func TestCustomConfig(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		got      interface{}
-		expected interface{}
+		got      any
+		expected any
 	}{
 		{"QdrantHost", cfg.QdrantHost, "custom-host"},
 		{"QdrantPort", cfg.QdrantPort, 9999},
