@@ -18,7 +18,6 @@ func ReadPlainText(path string) string {
 		return content
 	}
 
-
 	log.Println("Warning: invalid UTF-8 content in file", path)
 	return ""
 }
