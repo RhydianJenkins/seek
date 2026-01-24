@@ -57,7 +57,7 @@ func initCmd() *cobra.Command {
 		Short: "Generate embeddings for the knowledge base",
 		Args:  cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
-			handlers.Index(dataDir, chunkSize)
+			handlers.Embed(dataDir, chunkSize)
 		},
 	}
 	embedCmd.Flags().StringVar(&dataDir, "dataDir", "", "Directory containing .txt files to embed (required)")

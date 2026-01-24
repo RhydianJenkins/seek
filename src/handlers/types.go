@@ -2,7 +2,7 @@ package handlers
 
 type ProgressCallback func(current, total int, filename string)
 
-type IndexResult struct {
+type EmbedResult struct {
 	Success      bool   `json:"success"`
 	FilesIndexed int    `json:"files_indexed"`
 	TotalChunks  int    `json:"total_chunks"`

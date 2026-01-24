@@ -101,14 +101,14 @@ func (rs *RAGServer) handleEmbedTool(
 	ctx context.Context,
 	req *mcp.CallToolRequest,
 	input EmbedToolInput,
-) (*mcp.CallToolResult, *handlers.IndexResult, error) {
+) (*mcp.CallToolResult, *handlers.EmbedResult, error) {
 	if input.ChunkSize == 0 {
 		input.ChunkSize = 1000
 	}
 
 	log.Printf("Embed tool called with dataDir=%s, chunkSize=%d", input.DataDir, input.ChunkSize)
 
-	results, err := handlers.IndexFiles(input.DataDir, input.ChunkSize)
+	results, err := handlers.EmbedFiles(input.DataDir, input.ChunkSize)
 	if err != nil {
 		log.Printf("Embed tool error: %v", err)
 		return &mcp.CallToolResult{

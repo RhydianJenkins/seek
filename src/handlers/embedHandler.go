@@ -10,6 +10,7 @@ import (
 
 	"github.com/qdrant/go-client/qdrant"
 	"github.com/rhydianjenkins/seek/src/db"
+	"github.com/rhydianjenkins/seek/src/readers"
 )
 
 func chunkText(text string, maxChunkSize int) []string {
@@ -44,6 +45,8 @@ func chunkText(text string, maxChunkSize int) []string {
 }
 
 func readTextFiles(dataDir string) (map[string]string, error) {
+	// TODO Rhydian we load all files and their content into memory
+	// This might get too big for some systems
 	files := make(map[string]string)
 
 	err := filepath.Walk(dataDir, func(path string, info os.FileInfo, err error) error {
@@ -51,16 +54,24 @@ func readTextFiles(dataDir string) (map[string]string, error) {
 			return err
 		}
 
-		if !info.IsDir() && strings.HasSuffix(strings.ToLower(path), ".txt") {
-			content, err := os.ReadFile(path)
-			if err != nil {
-				log.Printf("Error reading file %s: %v", path, err)
-				return nil
-			}
-
-			relPath, _ := filepath.Rel(dataDir, path)
-			files[relPath] = string(content)
+		if info.IsDir() {
+			return nil
 		}
+
+		ext := strings.ToLower(filepath.Ext(path))
+		var content string
+
+		switch ext {
+		case ".txt":
+			content = readers.ReadPlainText(path)
+		case ".pdf":
+			content = readers.ReadPDFFile(path)
+		default:
+			return nil
+		}
+
+		relPath, _ := filepath.Rel(dataDir, path)
+		files[relPath] = content
 
 		return nil
 	})
@@ -68,10 +79,10 @@ func readTextFiles(dataDir string) (map[string]string, error) {
 	return files, err
 }
 
-func IndexFilesWithProgress(dataDir string, chunkSize int, progressCallback ProgressCallback) (*IndexResult, error) {
+func EmbedFilesWithProgress(dataDir string, chunkSize int, progressCallback ProgressCallback) (*EmbedResult, error) {
 	storage, err := db.Connect()
 	if err != nil {
-		return &IndexResult{
+		return &EmbedResult{
 			Success: false,
 			Error:   fmt.Sprintf("Unable to create storage: %v", err),
 		}, err
@@ -79,17 +90,17 @@ func IndexFilesWithProgress(dataDir string, chunkSize int, progressCallback Prog
 
 	files, err := readTextFiles(dataDir)
 	if err != nil {
-		return &IndexResult{
+		return &EmbedResult{
 			Success: false,
 			Error:   fmt.Sprintf("Unable to read files from directory %s: %v", dataDir, err),
 		}, err
 	}
 
 	if len(files) == 0 {
-		return &IndexResult{
+		return &EmbedResult{
 			Success: false,
-			Error:   fmt.Sprintf("No .txt files found in %s", dataDir),
-		}, fmt.Errorf("no .txt files found in %s", dataDir)
+			Error:   fmt.Sprintf("No .txt or .pdf files found in %s", dataDir),
+		}, fmt.Errorf("no .txt or .pdf files found in %s", dataDir)
 	}
 
 	var points []*qdrant.PointStruct
@@ -131,7 +142,7 @@ func IndexFilesWithProgress(dataDir string, chunkSize int, progressCallback Prog
 	}
 
 	if len(points) == 0 {
-		return &IndexResult{
+		return &EmbedResult{
 			Success: false,
 			Error:   "No points to index",
 		}, fmt.Errorf("no points to index")
@@ -139,13 +150,13 @@ func IndexFilesWithProgress(dataDir string, chunkSize int, progressCallback Prog
 
 	err = storage.GenerateDb(points)
 	if err != nil {
-		return &IndexResult{
+		return &EmbedResult{
 			Success: false,
 			Error:   fmt.Sprintf("Unable to generate db: %v", err),
 		}, err
 	}
 
-	return &IndexResult{
+	return &EmbedResult{
 		Success:      true,
 		FilesIndexed: len(files),
 		TotalChunks:  len(points),
@@ -153,12 +164,12 @@ func IndexFilesWithProgress(dataDir string, chunkSize int, progressCallback Prog
 	}, nil
 }
 
-// IndexFiles is a wrapper for backwards compatibility (used by MCP server)
-func IndexFiles(dataDir string, chunkSize int) (*IndexResult, error) {
-	return IndexFilesWithProgress(dataDir, chunkSize, nil)
+// EmbedFiles is a wrapper for backwards compatibility (used by MCP server)
+func EmbedFiles(dataDir string, chunkSize int) (*EmbedResult, error) {
+	return EmbedFilesWithProgress(dataDir, chunkSize, nil)
 }
 
-func Index(dataDir string, chunkSize int) error {
+func Embed(dataDir string, chunkSize int) error {
 	fmt.Printf("Starting indexing (chunk size: %d chars)\n", chunkSize)
 
 	startTime := time.Now()
@@ -201,7 +212,7 @@ func Index(dataDir string, chunkSize int) error {
 		}
 	}
 
-	result, err := IndexFilesWithProgress(dataDir, chunkSize, progressCallback)
+	result, err := EmbedFilesWithProgress(dataDir, chunkSize, progressCallback)
 	if err != nil {
 		fmt.Printf("\nError: %s\n", result.Error)
 		return err
