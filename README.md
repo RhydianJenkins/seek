@@ -122,16 +122,11 @@ Configure the server using command-line flags:
 - `--qdrantPort` - Qdrant server port (default: 6334)
 - `--collection` - Qdrant collection name (default: my_collection)
 
-## Supported File Types
-
-- `.txt` - Plain text files
-- `.pdf` - PDF documents
-
 ## TODO
 
 - [ ] Incremental updates - you lose everything each time you re-embed
-- [ ] Backup/restore functionality
-- [ ] No auth/TLS support
-- [ ] Better file support (.md, .docx, .pptx, .xlsx, etc)
+- [ ] Backup/restore support
+- [ ] Add auth/TLS support
+- [ ] Better file parsing (.docx, .pptx, .xlsx, etc.)
 - [ ] Allow embedding model to be specified (currently hardcoded to `nomic-embed-text`)
 - [ ] Image/OCR support
