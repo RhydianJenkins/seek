@@ -6,7 +6,12 @@ import (
 	"unicode/utf8"
 )
 
-func ReadPlainText(path string) string {
+type PlainTextReader struct{}
+
+// Ensure PlainTextReader implements FileReader at compile time
+var _ FileReader = PlainTextReader{}
+
+func (r PlainTextReader) Read(path string) string {
 	bytes, err := os.ReadFile(path)
 	if err != nil {
 		log.Printf("Error reading file %s: %v", path, err)
