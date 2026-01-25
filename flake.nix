@@ -38,9 +38,18 @@
             ${pkgs.ollama}/bin/ollama serve &
             OLLAMA_PID=$!
 
-            # Wait for Ollama to be ready
+            # Wait for Ollama to be ready with timeout
             echo "Starting Ollama..."
+            MAX_RETRIES=30
+            RETRY_COUNT=0
             until curl -s http://localhost:11434/api/tags > /dev/null 2>&1; do
+              RETRY_COUNT=$((RETRY_COUNT + 1))
+              echo "Checking if Ollama is ready... ($RETRY_COUNT/$MAX_RETRIES)"
+              if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
+                echo "ERROR: Ollama failed to start after $MAX_RETRIES seconds" >&2
+                kill $OLLAMA_PID 2>/dev/null
+                exit 1
+              fi
               sleep 1
             done
             echo "Ollama is ready!"
