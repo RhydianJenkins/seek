@@ -33,7 +33,11 @@ seek --help
 
 Start the required services ([Ollama](https://ollama.com) and [Qdrant](https://qdrant.tech)):
 ```sh
-nix run github:rhydianjenkins/seek#start-services
+# Start Qdrant (in one terminal)
+nix run github:rhydianjenkins/seek#qdrant
+
+# Start Ollama (in another terminal - auto-pulls nomic-embed-text model)
+nix run github:rhydianjenkins/seek#ollama
 
 # Or you can bring your own services
 seek --ollamaHost your.ollama.host \
