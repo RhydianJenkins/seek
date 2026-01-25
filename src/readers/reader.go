@@ -13,6 +13,7 @@ func NewReader() *Reader {
 
 	reader.register(".pdf", PDFReader{})
 	reader.register(".xlsx", XLSXReader{})
+	reader.register(".docx", DOCXReader{})
 
 	return reader
 }
