@@ -7,8 +7,13 @@ import (
 	"github.com/ledongthuc/pdf"
 )
 
-func ReadPDFFile(path string) string {
-	f, r, err := pdf.Open(path)
+type PDFReader struct{}
+
+// Ensure PDFReader implements FileReader at compile time
+var _ FileReader = PDFReader{}
+
+func (r PDFReader) Read(path string) string {
+	f, pdfReader, err := pdf.Open(path)
 	if err != nil {
 		log.Printf("Error opening PDF %s: %v", path, err)
 		return ""
@@ -16,10 +21,10 @@ func ReadPDFFile(path string) string {
 	defer f.Close()
 
 	var text strings.Builder
-	totalPages := r.NumPage()
+	totalPages := pdfReader.NumPage()
 
 	for pageNum := 1; pageNum <= totalPages; pageNum++ {
-		p := r.Page(pageNum)
+		p := pdfReader.Page(pageNum)
 		if p.V.IsNull() {
 			continue
 		}
@@ -34,4 +39,8 @@ func ReadPDFFile(path string) string {
 	}
 
 	return text.String()
+}
+
+func ReadPDFFile(path string) string {
+	return PDFReader{}.Read(path)
 }

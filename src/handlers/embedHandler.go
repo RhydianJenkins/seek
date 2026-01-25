@@ -48,6 +48,7 @@ func readTextFiles(dataDir string) (map[string]string, error) {
 	// TODO Rhydian we load all files and their content into memory
 	// This might get too big for some systems
 	files := make(map[string]string)
+	reader := readers.NewReader()
 
 	err := filepath.Walk(dataDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -58,15 +59,7 @@ func readTextFiles(dataDir string) (map[string]string, error) {
 			return nil
 		}
 
-		ext := strings.ToLower(filepath.Ext(path))
-		var content string
-
-		switch ext {
-		case ".pdf":
-			content = readers.ReadPDFFile(path)
-		default:
-			content = readers.ReadPlainText(path)
-		}
+		content := reader.ReadFile(path)
 
 		relPath, _ := filepath.Rel(dataDir, path)
 		files[relPath] = content
