@@ -88,6 +88,9 @@ seek search "What is important for me to do this week?" --limit 3
 ### Get Document
 Retrieve a complete document by filename:
 ```sh
+# show all documents in current database
+seek list
+
 seek get "document.txt"
 ```
 
