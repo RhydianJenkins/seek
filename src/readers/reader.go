@@ -6,14 +6,14 @@ import (
 )
 
 func NewReader() *Reader {
-	registry := &Reader{
+	reader := &Reader{
 		readers:       make(map[string]FileReader),
 		defaultReader: PlainTextReader{},
 	}
 
-	registry.register(".pdf", PDFReader{})
+	reader.register(".pdf", PDFReader{})
 
-	return registry
+	return reader
 }
 
 func (r *Reader) register(extension string, reader FileReader) {
