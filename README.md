@@ -14,6 +14,7 @@ This is an early prototype and breaking changes are likely.
 
 - **Plain Text** - `.txt`, `.md`, and other text-based files
 - **PDF** - `.pdf` documents with text extraction
+- **Word** - `.docx` documents with text extraction
 - **Excel** - `.xlsx` spreadsheets (all sheets and cells)
 
 # Getting Started
@@ -138,5 +139,5 @@ Configure the server using command-line flags:
 ## TODO
 
 - [ ] Add auth/TLS support
-- [ ] Better file parsing (.docx, .pptx, etc.)
+- [ ] Better file parsing (.pptx, etc.)
 - [ ] Image/OCR support
