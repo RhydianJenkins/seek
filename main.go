@@ -99,6 +99,16 @@ func initCmd() *cobra.Command {
 	}
 	rootCmd.AddCommand(statusCmd)
 
+	var listCmd = &cobra.Command{
+		Use:   "list",
+		Short: "List all document names in the database",
+		Args:  cobra.ExactArgs(0),
+		Run: func(cmd *cobra.Command, args []string) {
+			handlers.List()
+		},
+	}
+	rootCmd.AddCommand(listCmd)
+
 	var versionCmd = &cobra.Command{
 		Use:   "version",
 		Short: "Print the version number",

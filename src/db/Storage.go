@@ -202,3 +202,34 @@ func (storage *Storage) GetDocumentByFilename(filename string) ([]*qdrant.Scored
 
 	return scoredPoints, nil
 }
+
+func (storage *Storage) ListDocuments() ([]string, error) {
+	scrollResult, err := storage.client.Scroll(
+		context.Background(),
+		&qdrant.ScrollPoints{
+			CollectionName: storage.collectionName,
+			WithPayload:    qdrant.NewWithPayload(true),
+			Limit:          qdrant.PtrOf(uint32(10000)),
+		},
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to scroll documents: %w", err)
+	}
+
+	filenameMap := make(map[string]bool)
+	for _, point := range scrollResult {
+		if point.Payload != nil {
+			if filename, ok := point.Payload["filename"]; ok {
+				filenameMap[filename.GetStringValue()] = true
+			}
+		}
+	}
+
+	filenames := make([]string, 0, len(filenameMap))
+	for filename := range filenameMap {
+		filenames = append(filenames, filename)
+	}
+
+	return filenames, nil
+}
