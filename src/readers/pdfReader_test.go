@@ -5,9 +5,9 @@ import (
 )
 
 func TestReadPDFFile(t *testing.T) {
-	pdfContent := ReadPDFFile("../../test-data/pdfs/pdf_test.pdf")
+	pdfContent := PDFReader{}.Read("../../test-data/pdfs/pdf_test.pdf")
 
 	if pdfContent == "" {
-		t.Errorf("ReadPDFFile() returned an empty string")
+		t.Errorf("PDFReader{}.Read(...) returned an empty string")
 	}
 }

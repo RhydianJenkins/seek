@@ -40,7 +40,3 @@ func (r PDFReader) Read(path string) string {
 
 	return text.String()
 }
-
-func ReadPDFFile(path string) string {
-	return PDFReader{}.Read(path)
-}
