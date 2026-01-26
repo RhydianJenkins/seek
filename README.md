@@ -140,4 +140,3 @@ Configure the server using command-line flags:
 
 - [ ] Add auth/TLS support
 - [ ] Image/OCR support
-- [ ] URL webpage crawling (and not the annoying kind!)

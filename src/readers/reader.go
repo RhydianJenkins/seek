@@ -14,6 +14,8 @@ func NewReader() *Reader {
 	reader.register(".pdf", PDFReader{})
 	reader.register(".xlsx", XLSXReader{})
 	reader.register(".docx", DOCXReader{})
+	reader.register(".html", HTMLReader{})
+	reader.register(".htm", HTMLReader{})
 
 	return reader
 }
