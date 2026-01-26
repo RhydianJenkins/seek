@@ -3,6 +3,7 @@ module github.com/rhydianjenkins/seek
 go 1.25.5
 
 require (
+	github.com/JohannesKaufmann/html-to-markdown v1.6.0
 	github.com/ledongthuc/pdf v0.0.0-20250511090121-5959a4027728
 	github.com/modelcontextprotocol/go-sdk v1.2.0
 	github.com/qdrant/go-client v1.16.2
@@ -11,7 +12,6 @@ require (
 )
 
 require (
-	github.com/JohannesKaufmann/html-to-markdown v1.6.0 // indirect
 	github.com/PuerkitoBio/goquery v1.9.2 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/google/jsonschema-go v0.3.0 // indirect
