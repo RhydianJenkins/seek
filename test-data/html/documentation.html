@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API Documentation - Search Endpoint</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="sidebar">
+        <nav>
+            <h3>Documentation</h3>
+            <ul>
+                <li><a href="#getting-started">Getting Started</a></li>
+                <li><a href="#search">Search API</a></li>
+                <li><a href="#embed">Embed API</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <main class="content">
+        <h1>Search API Reference</h1>
+
+        <section id="overview">
+            <h2>Overview</h2>
+            <p>The Search API allows you to query your knowledge base using semantic search. It returns the most relevant chunks based on vector similarity.</p>
+        </section>
+
+        <section id="endpoint">
+            <h2>Endpoint</h2>
+            <p><code>POST /api/search</code></p>
+
+            <h3>Request Body</h3>
+            <pre><code>{
+  "query": "How do vector embeddings work?",
+  "limit": 5,
+  "threshold": 0.7
+}</code></pre>
+
+            <h3>Parameters</h3>
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>query</td>
+                    <td>string</td>
+                    <td>The search query text</td>
+                </tr>
+                <tr>
+                    <td>limit</td>
+                    <td>integer</td>
+                    <td>Maximum number of results (default: 10)</td>
+                </tr>
+                <tr>
+                    <td>threshold</td>
+                    <td>float</td>
+                    <td>Minimum similarity score (0-1)</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="response">
+            <h2>Response</h2>
+            <p>Returns an array of matching chunks with metadata:</p>
+            <pre><code>{
+  "results": [
+    {
+      "content": "Vector embeddings are numerical representations...",
+      "filename": "intro.md",
+      "similarity": 0.89,
+      "chunk_id": "abc123"
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section id="example">
+            <h2>Example Usage</h2>
+
+            <h3>cURL</h3>
+            <pre><code>curl -X POST http://localhost:8080/api/search \
+  -H "Content-Type: application/json" \
+  -d '{"query": "RAG implementation", "limit": 3}'</code></pre>
+
+            <h3>Python</h3>
+            <pre><code>import requests
+
+response = requests.post(
+    "http://localhost:8080/api/search",
+    json={"query": "RAG implementation", "limit": 3}
+)
+results = response.json()["results"]</code></pre>
+        </section>
+
+        <section id="notes">
+            <h2>Important Notes</h2>
+            <ul>
+                <li>Queries are automatically converted to embeddings using the same model used for indexing</li>
+                <li>Similarity scores range from 0 (no match) to 1 (perfect match)</li>
+                <li>Results are sorted by similarity score in descending order</li>
+            </ul>
+        </section>
+    </main>
+
+    <script src="/analytics.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Code highlighting
+            hljs.highlightAll();
+        });
+    </script>
+</body>
+</html>
