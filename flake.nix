@@ -18,7 +18,7 @@
             pname = "seek";
             inherit version;
             src = ./.;
-            vendorHash = "sha256-zykBrkp9m8rT1k+yMm2IoBI86HlQfJGQemrhZ+UIhJQ=";
+            vendorHash = "sha256-LQ2dzPqxTBWTlWgX48ylAIqa5pSKAO4s8DejAYxEcvo=";
 
             meta = with pkgs.lib; {
               description = "RAG MCP Server";
