@@ -46,13 +46,8 @@ nix run github:rhydianjenkins/seek#qdrant
 # Start Ollama (in another terminal - auto-pulls nomic-embed-text model)
 nix run github:rhydianjenkins/seek#ollama
 
-# Or you can bring your own services
-seek --ollamaHost your.ollama.host \
-    --ollamaPort 11434 \
-    --qdrantHost your.qdrant.host \
-    --qdrantPort 6334 \
-    --dataDir test-data \
-    [command]
+# Or bring your own services by creating a .env file
+cp .env.default .env
 ```
 
 </details>
@@ -126,20 +121,9 @@ When running as an MCP server, the following tools are available:
 - `get_document` - Retrieve a full document by filename
 - `status` - Get database status and statistics
 
-## Configuration
-
-[Depracated] Configure the server using command-line flags:
-
-- `--ollamaHost` - Ollama server host (default: localhost)
-- `--ollamaPort` - Ollama server port (default: 11434)
-- `--qdrantHost` - Qdrant server host (default: localhost)
-- `--qdrantPort` - Qdrant server port (default: 6334)
-- `--collection` - Qdrant collection name (default: my_collection)
-
 ## TODO
 
 - [ ] Add auth/TLS support
 - [ ] Image/OCR support
 - [ ] Docker image support
 - [ ] `seek ask` command that uses ollama for answers
-- [ ] Move env variables to `.env.default`

@@ -24,7 +24,7 @@ func TestDefaultConfig(t *testing.T) {
 		{"QdrantHost", cfg.QdrantHost, "localhost"},
 		{"QdrantPort", cfg.QdrantPort, 6334},
 		{"QdrantUseTLS", cfg.QdrantUseTLS, false},
-		{"CollectionName", cfg.CollectionName, "my_collection"},
+		{"CollectionName", cfg.CollectionName, "seek_collection"},
 		{"VectorSize", cfg.VectorSize, uint64(768)},
 		{"OllamaURL", cfg.OllamaURL, "http://localhost:11434"},
 		{"EmbeddingModel", cfg.EmbeddingModel, "nomic-embed-text"},

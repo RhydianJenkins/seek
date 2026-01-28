@@ -1,6 +1,9 @@
 package config
 
-import "sync"
+import (
+	"os"
+	"sync"
+)
 
 type Config struct {
 	CollectionName string
@@ -36,10 +39,19 @@ func Get() *Config {
 	return instance
 }
 
+// getEnv returns the value of an environment variable or the default value if not set
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
 // applyDefaults fills in default values for any zero-value fields
+// Reads from environment variables for supported fields, then falls back to hardcoded defaults
 func applyDefaults(cfg *Config) *Config {
 	if cfg.CollectionName == "" {
-		cfg.CollectionName = "my_collection"
+		cfg.CollectionName = getEnv("COLLECTION_NAME", "seek_collection")
 	}
 	if cfg.EmbeddingModel == "" {
 		cfg.EmbeddingModel = "nomic-embed-text"
@@ -48,7 +60,7 @@ func applyDefaults(cfg *Config) *Config {
 		cfg.OllamaURL = "http://localhost:11434"
 	}
 	if cfg.QdrantHost == "" {
-		cfg.QdrantHost = "localhost"
+		cfg.QdrantHost = getEnv("QDRANT_HOST", "localhost")
 	}
 	if cfg.QdrantPort == 0 {
 		cfg.QdrantPort = 6334

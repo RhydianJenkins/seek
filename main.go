@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
+	"github.com/joho/godotenv"
 	"github.com/rhydianjenkins/seek/src/config"
 	"github.com/rhydianjenkins/seek/src/handlers"
 	"github.com/rhydianjenkins/seek/src/mcp"
@@ -18,24 +20,41 @@ import (
 var version string
 var logfile = "seek.log"
 
+func loadEnvFiles() {
+	_ = godotenv.Load(".env.default")
+	_ = godotenv.Overload(".env")
+}
+
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
+func getEnvInt(key string, defaultValue int) int {
+	if value := os.Getenv(key); value != "" {
+		if intValue, err := strconv.Atoi(value); err == nil {
+			return intValue
+		}
+	}
+	return defaultValue
+}
+
 func initCmd() *cobra.Command {
-	var (
-		ollamaHost     string
-		ollamaPort     int
-		qdrantHost     string
-		qdrantPort     int
-		collectionName string
-	)
+	loadEnvFiles()
 
 	var rootCmd = &cobra.Command{
 		Short: "RAG MCP Server",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			ollamaHost := getEnv("OLLAMA_HOST", "localhost")
+			ollamaPort := getEnvInt("OLLAMA_PORT", 11434)
 			ollamaURL := fmt.Sprintf("http://%s:%d", ollamaHost, ollamaPort)
 			config.Initialize(&config.Config{
-				CollectionName: collectionName,
+				CollectionName: getEnv("COLLECTION_NAME", "seek_collection"),
 				OllamaURL:      ollamaURL,
-				QdrantHost:     qdrantHost,
-				QdrantPort:     qdrantPort,
+				QdrantHost:     getEnv("QDRANT_HOST", "localhost"),
+				QdrantPort:     getEnvInt("QDRANT_PORT", 6334),
 				ServerVersion:  strings.TrimSpace(version),
 			})
 		},
@@ -43,12 +62,6 @@ func initCmd() *cobra.Command {
 			cmd.Help()
 		},
 	}
-
-	rootCmd.PersistentFlags().StringVar(&ollamaHost, "ollamaHost", "localhost", "Ollama server host")
-	rootCmd.PersistentFlags().IntVar(&ollamaPort, "ollamaPort", 11434, "Ollama server port")
-	rootCmd.PersistentFlags().StringVar(&qdrantHost, "qdrantHost", "localhost", "Qdrant server host")
-	rootCmd.PersistentFlags().IntVar(&qdrantPort, "qdrantPort", 6334, "Qdrant server port")
-	rootCmd.PersistentFlags().StringVar(&collectionName, "collection", "my_collection", "Qdrant collection name")
 
 	var dataDir string
 	var chunkSize int
