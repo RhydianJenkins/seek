@@ -21,8 +21,7 @@ var version string
 var logfile = "seek.log"
 
 func loadEnvFiles() {
-	_ = godotenv.Load(".env.default")
-	_ = godotenv.Overload(".env")
+	godotenv.Overload(".env.default", ".env")
 }
 
 func getEnv(key, defaultValue string) string {
@@ -42,8 +41,6 @@ func getEnvInt(key string, defaultValue int) int {
 }
 
 func initCmd() *cobra.Command {
-	loadEnvFiles()
-
 	var rootCmd = &cobra.Command{
 		Short: "RAG MCP Server",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
@@ -164,5 +161,6 @@ func initCmd() *cobra.Command {
 }
 
 func main() {
+	loadEnvFiles()
 	initCmd().Execute()
 }
