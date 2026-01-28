@@ -164,7 +164,7 @@ docker tag seek:1.0.0 ghcr.io/rhydianjenkins/seek:1.0.0
 docker tag seek:1.0.0 ghcr.io/rhydianjenkins/seek:latest
 
 # Login to GitHub Container Registry (requires a PAT with write:packages scope)
-echo $GITHUB_TOKEN | docker login ghcr.io -u rhydianjenkins --password-stdin
+echo $CR_PAT | docker login ghcr.io -u rhydianjenkins --password-stdin
 
 # Push both tags
 docker push ghcr.io/rhydianjenkins/seek:1.0.0
