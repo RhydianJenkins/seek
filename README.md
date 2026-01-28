@@ -146,7 +146,9 @@ When running as an MCP server, the following tools are available:
 - `get_document` - Retrieve a full document by filename
 - `status` - Get database status and statistics
 
-# Publishing Docker Images (Maintainers)
+# Development
+
+## Publishing Docker Images
 
 To publish a new version to GitHub Container Registry:
 
