@@ -66,6 +66,51 @@ Make sure `$GOPATH/bin` (usually `~/go/bin`) is in your PATH.
 </details>
 
 <details>
+<summary>Use with Docker</summary>
+
+Build the Docker image using Nix (requires Nix with flakes enabled):
+```sh
+# Build the Docker image
+nix build .#docker
+
+# Load it into Docker
+docker load < result
+```
+
+This creates a `seek` image tagged with the version from the VERSION file (e.g., `seek:1.0.0`).
+
+Run the required services and seek:
+```sh
+# Start Qdrant
+docker run -d --name qdrant \
+  -p 6333:6333 -p 6334:6334 \
+  -v qdrant_storage:/qdrant/storage \
+  qdrant/qdrant:latest
+
+# Start Ollama
+docker run -d --name ollama \
+  -p 11434:11434 \
+  -v ollama_data:/root/.ollama \
+  ollama/ollama:latest
+
+# Pull the embedding model
+docker exec ollama ollama pull nomic-embed-text
+
+# Run seek (adjust tag to match your version)
+docker run --rm \
+  -e QDRANT_HOST=host.docker.internal \
+  -e QDRANT_PORT=6333 \
+  -e OLLAMA_HOST=host.docker.internal \
+  -e OLLAMA_PORT=11434 \
+  -v $(pwd)/data:/data \
+  seek:1.0.0 --help
+```
+
+Note: Use `host.docker.internal` on Mac/Windows or `172.17.0.1` on Linux to connect to services running on the host.
+
+</details>
+
+<details>
 <summary>Build from Source</summary>
 
 ```sh
@@ -125,5 +170,5 @@ When running as an MCP server, the following tools are available:
 
 - [ ] Add auth/TLS support
 - [ ] Image/OCR support
-- [ ] Docker image support
+- [x] Docker image support
 - [ ] `seek ask` command that uses ollama for answers

@@ -67,6 +67,20 @@
             wait $OLLAMA_PID
           '';
 
+          docker = pkgs.dockerTools.buildLayeredImage {
+            name = "seek";
+            tag = version;
+            contents = [ self.packages.${system}.seek ];
+            config = {
+              Cmd = [ "/bin/seek" ];
+              WorkingDir = "/data";
+              Env = [
+                "QDRANT_URL=http://qdrant:6333"
+                "OLLAMA_URL=http://ollama:11434"
+              ];
+            };
+          };
+
           default = self.packages.${system}.seek;
         };
 
