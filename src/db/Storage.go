@@ -15,6 +15,9 @@ import (
 
 func Connect() (*Storage, error) {
 	cfg := config.Get()
+	if cfg == nil {
+		return nil, fmt.Errorf("config not initialized: call config.Initialize() before connecting to database")
+	}
 
 	client, err := qdrant.NewClient(&qdrant.Config{
 		Host:   cfg.QdrantHost,

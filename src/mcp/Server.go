@@ -2,6 +2,7 @@ package mcp
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -12,6 +13,9 @@ import (
 
 func NewRAGServer() (*RAGServer, error) {
 	cfg := config.Get()
+	if cfg == nil {
+		return nil, fmt.Errorf("config not initialized: call config.Initialize() before creating server")
+	}
 
 	storage, err := db.Connect()
 	if err != nil {
