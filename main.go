@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/joho/godotenv"
@@ -20,35 +19,12 @@ import (
 var version string
 var logfile = "seek.log"
 
-func getEnv(key, defaultValue string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
-	}
-	return defaultValue
-}
-
-func getEnvInt(key string, defaultValue int) int {
-	if value := os.Getenv(key); value != "" {
-		if intValue, err := strconv.Atoi(value); err == nil {
-			return intValue
-		}
-	}
-	return defaultValue
-}
-
 func initCmd() *cobra.Command {
 	var rootCmd = &cobra.Command{
 		Short: "RAG MCP Server",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			ollamaHost := getEnv("OLLAMA_HOST", "localhost")
-			ollamaPort := getEnvInt("OLLAMA_PORT", 11434)
-			ollamaURL := fmt.Sprintf("http://%s:%d", ollamaHost, ollamaPort)
 			config.Initialize(&config.Config{
-				CollectionName: getEnv("COLLECTION_NAME", "seek_collection"),
-				OllamaURL:      ollamaURL,
-				QdrantHost:     getEnv("QDRANT_HOST", "localhost"),
-				QdrantPort:     getEnvInt("QDRANT_PORT", 6334),
-				ServerVersion:  strings.TrimSpace(version),
+				ServerVersion: strings.TrimSpace(version),
 			})
 		},
 		Run: func(cmd *cobra.Command, args []string) {
