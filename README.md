@@ -201,5 +201,4 @@ Make sure the repository visibility is set to public in GitHub Container Registr
 
 - [ ] Add auth/TLS support
 - [ ] Image/OCR support
-- [x] Docker image support
 - [ ] `seek ask` command that uses ollama for answers
