@@ -128,7 +128,7 @@ When running as an MCP server, the following tools are available:
 
 ## Configuration
 
-Configure the server using command-line flags:
+[Depracated] Configure the server using command-line flags:
 
 - `--ollamaHost` - Ollama server host (default: localhost)
 - `--ollamaPort` - Ollama server port (default: 11434)
@@ -140,3 +140,6 @@ Configure the server using command-line flags:
 
 - [ ] Add auth/TLS support
 - [ ] Image/OCR support
+- [ ] Docker image support
+- [ ] `seek ask` command that uses ollama for answers
+- [ ] Move env variables to `.env.default`
