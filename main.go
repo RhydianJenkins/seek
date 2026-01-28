@@ -20,10 +20,6 @@ import (
 var version string
 var logfile = "seek.log"
 
-func loadEnvFiles() {
-	godotenv.Overload(".env.default", ".env")
-}
-
 func getEnv(key, defaultValue string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
@@ -161,6 +157,6 @@ func initCmd() *cobra.Command {
 }
 
 func main() {
-	loadEnvFiles()
+	godotenv.Overload(".env.default", ".env")
 	initCmd().Execute()
 }
