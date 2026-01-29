@@ -9,7 +9,10 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
         version = pkgs.lib.trim (builtins.readFile ./VERSION);
       in
       {
@@ -67,6 +70,15 @@
             wait $OLLAMA_PID
           '';
 
+          open-webui = pkgs.writeShellScriptBin "open-webui-service" ''
+            # Set writable data directory
+            export DATA_DIR="''${XDG_DATA_HOME:-$HOME/.local/share}/open-webui"
+            mkdir -p "$DATA_DIR"
+
+            export OLLAMA_BASE_URL=http://localhost:11434
+            exec ${pkgs.open-webui}/bin/open-webui serve --port 3000
+          '';
+
           default = self.packages.${system}.seek;
         };
 
@@ -85,9 +97,13 @@
           shellHook = ''
             echo "RAG MCP Server development environment"
             echo ""
-            echo "Services:"
-            echo "  nix run .#qdrant - Start Qdrant vector database"
-            echo "  nix run .#ollama - Start Ollama server (auto-pulls nomic-embed-text)"
+            echo "Start all services:"
+            echo "  nix run .#services"
+            echo ""
+            echo "Or start individually:"
+            echo "  nix run .#qdrant      - Start Qdrant vector database"
+            echo "  nix run .#ollama      - Start Ollama server (auto-pulls nomic-embed-text)"
+            echo "  nix run .#open-webui  - Start Open WebUI (Ollama chat interface)"
           '';
         };
       }

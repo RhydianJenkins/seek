@@ -1,6 +1,7 @@
 .env
 .mcp.json
 .qdrant-initialized
+.webui_secret_key
 result
 seek
 seek.log
