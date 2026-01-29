@@ -31,11 +31,35 @@
           };
 
           qdrant = pkgs.writeShellScriptBin "qdrant-service" ''
+            # Load environment variables from .env if it exists
+            set -a
+            source .env.default
+            if [ -f .env ]; then
+              source .env
+            fi
+            set +a
+
+            # Set Qdrant-specific environment variables
+            export QDRANT__SERVICE__HOST=''${QDRANT_HOST:-localhost}
+            export QDRANT__SERVICE__HTTP_PORT=''${QDRANT_PORT:-6334}
+
             exec ${pkgs.qdrant}/bin/qdrant
           '';
 
           ollama = pkgs.writeShellScriptBin "ollama-service" ''
+            # Load environment variables from .env if it exists
+            set -a
+            source .env.default
+            if [ -f .env ]; then
+              source .env
+            fi
+            set +a
+
             export PATH="${pkgs.lib.makeBinPath [ pkgs.ollama pkgs.curl ]}:$PATH"
+
+            # Use environment variables with defaults
+            OLLAMA_HOST=''${OLLAMA_HOST:-localhost}
+            OLLAMA_PORT=''${OLLAMA_PORT:-11434}
 
             # Start Ollama in the background
             ${pkgs.ollama}/bin/ollama serve &
@@ -45,7 +69,7 @@
             echo "Starting Ollama..."
             MAX_RETRIES=30
             RETRY_COUNT=0
-            until curl -s http://localhost:11434/api/tags > /dev/null 2>&1; do
+            until curl -s http://$OLLAMA_HOST:$OLLAMA_PORT/api/tags > /dev/null 2>&1; do
               RETRY_COUNT=$((RETRY_COUNT + 1))
               echo "Checking if Ollama is ready... ($RETRY_COUNT/$MAX_RETRIES)"
               if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
@@ -71,12 +95,25 @@
           '';
 
           open-webui = pkgs.writeShellScriptBin "open-webui-service" ''
+            # Load environment variables from .env if it exists
+            set -a
+            source .env.default
+            if [ -f .env ]; then
+              source .env
+            fi
+            set +a
+
             # Set writable data directory
             export DATA_DIR="''${XDG_DATA_HOME:-$HOME/.local/share}/open-webui"
             mkdir -p "$DATA_DIR"
 
-            export OLLAMA_BASE_URL=http://localhost:11434
-            exec ${pkgs.open-webui}/bin/open-webui serve --port 3000
+            # Use environment variables with defaults
+            OLLAMA_HOST=''${OLLAMA_HOST:-localhost}
+            OLLAMA_PORT=''${OLLAMA_PORT:-11434}
+            WEBUI_PORT=''${WEBUI_PORT:-3000}
+
+            export OLLAMA_BASE_URL=http://$OLLAMA_HOST:$OLLAMA_PORT
+            exec ${pkgs.open-webui}/bin/open-webui serve --port $WEBUI_PORT
           '';
 
           default = self.packages.${system}.seek;
