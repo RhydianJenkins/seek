@@ -97,9 +97,6 @@
           shellHook = ''
             echo "RAG MCP Server development environment"
             echo ""
-            echo "Start all services:"
-            echo "  nix run .#services"
-            echo ""
             echo "Or start individually:"
             echo "  nix run .#qdrant      - Start Qdrant vector database"
             echo "  nix run .#ollama      - Start Ollama server (auto-pulls nomic-embed-text)"
