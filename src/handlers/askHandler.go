@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/rhydianjenkins/seek/src/config"
@@ -45,7 +46,12 @@ func AskQuestion(question string) error {
 
 		if len(response.ToolCalls) > 0 {
 			for _, toolCall := range response.ToolCalls {
-				fmt.Printf("[Calling tool: %s]\n", toolCall.Function.Name)
+				var args map[string]interface{}
+				json.Unmarshal(toolCall.Function.Arguments, &args)
+				argsJSON, _ := json.MarshalIndent(args, "  ", "  ")
+
+				fmt.Printf("\n[Calling tool: %s]\n", toolCall.Function.Name)
+				fmt.Printf("  Arguments:\n  %s\n", string(argsJSON))
 
 				result, err := tools.ExecuteTool(toolCall)
 				if err != nil {

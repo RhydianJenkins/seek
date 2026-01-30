@@ -11,18 +11,30 @@ import (
 func ExecuteTool(toolCall ollama.ToolCall) (string, error) {
 	switch toolCall.Function.Name {
 	case "search":
-		var input struct {
-			Query string `json:"query"`
-			Limit int    `json:"limit"`
-		}
-		if err := json.Unmarshal(toolCall.Function.Arguments, &input); err != nil {
+		// Parse flexibly - Ollama may send limit as string or int
+		var rawInput map[string]interface{}
+		if err := json.Unmarshal(toolCall.Function.Arguments, &rawInput); err != nil {
 			return "", fmt.Errorf("failed to parse search arguments: %w", err)
 		}
-		if input.Limit == 0 {
-			input.Limit = 3
+
+		query, _ := rawInput["query"].(string)
+
+		// Handle limit as either int or string
+		limit := 3 // default
+		if limitVal, ok := rawInput["limit"]; ok && limitVal != nil {
+			switch v := limitVal.(type) {
+			case float64: // JSON numbers are float64
+				limit = int(v)
+			case string:
+				if parsedLimit, err := json.Number(v).Int64(); err == nil {
+					limit = int(parsedLimit)
+				}
+			case int:
+				limit = v
+			}
 		}
 
-		results, err := services.SearchFiles(input.Query, input.Limit)
+		results, err := services.SearchFiles(query, limit)
 		if err != nil {
 			return "", fmt.Errorf("search failed: %w", err)
 		}

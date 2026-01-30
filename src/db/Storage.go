@@ -41,6 +41,15 @@ func Connect() (*Storage, error) {
 }
 
 func (storage *Storage) GetEmbedding(text string) ([]float32, error) {
+	if text == "" {
+		return nil, fmt.Errorf("cannot generate embedding for empty text")
+	}
+
+	textPreview := text
+	if len(textPreview) > 50 {
+		textPreview = textPreview[:50] + "..."
+	}
+
 	reqBody := ollamaEmbedRequest{
 		Model:  storage.embeddingModel,
 		Prompt: text,
@@ -57,18 +66,31 @@ func (storage *Storage) GetEmbedding(text string) ([]float32, error) {
 		bytes.NewBuffer(jsonData),
 	)
 	if err != nil {
+		log.Printf("Ollama API call failed for text '%s': %v", textPreview, err)
 		return nil, fmt.Errorf("failed to call Ollama API: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
+		log.Printf("Ollama returned non-200 status for text '%s': %d - %s", textPreview, resp.StatusCode, string(body))
 		return nil, fmt.Errorf("Ollama API returned status %d: %s", resp.StatusCode, string(body))
 	}
 
 	var embedResp ollamaEmbedResponse
 	if err := json.NewDecoder(resp.Body).Decode(&embedResp); err != nil {
+		log.Printf("Failed to decode Ollama response for text '%s': %v", textPreview, err)
 		return nil, fmt.Errorf("failed to decode response: %w", err)
+	}
+
+	if len(embedResp.Embedding) == 0 {
+		log.Printf("Ollama returned EMPTY embedding for text '%s' (model: %s)", textPreview, storage.embeddingModel)
+		return nil, fmt.Errorf("ollama returned empty embedding - is the model '%s' loaded? try: ollama pull %s", storage.embeddingModel, storage.embeddingModel)
+	}
+
+	if len(embedResp.Embedding) != int(storage.vectorSize) {
+		log.Printf("Ollama returned embedding with WRONG dimensions for text '%s': got %d, expected %d", textPreview, len(embedResp.Embedding), storage.vectorSize)
+		return nil, fmt.Errorf("ollama returned embedding with %d dimensions, expected %d - check your embedding model configuration", len(embedResp.Embedding), storage.vectorSize)
 	}
 
 	return embedResp.Embedding, nil

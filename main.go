@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/joho/godotenv"
@@ -50,7 +51,11 @@ func initCmd() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			question := args[0]
-			handlers.AskQuestion(question)
+			err := handlers.AskQuestion(question)
+
+			if err != nil {
+				log.Println("Error:", err)
+			}
 		},
 	}
 	rootCmd.AddCommand(askCmd)
