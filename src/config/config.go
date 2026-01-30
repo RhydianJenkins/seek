@@ -11,6 +11,7 @@ import (
 type Config struct {
 	CollectionName string
 	EmbeddingModel string
+	ChatModel      string
 	OllamaURL      string
 	QdrantHost     string
 	QdrantPort     int
@@ -80,6 +81,14 @@ func applyDefaults(cfg *Config) *Config {
 
 	cfg.VectorSize = 768
 	cfg.EmbeddingModel = "nomic-embed-text"
+
+	if cfg.ChatModel == "" {
+		if chatModel := os.Getenv("CHAT_MODEL"); chatModel != "" {
+			cfg.ChatModel = chatModel
+		} else {
+			cfg.ChatModel = "llama3.2"
+		}
+	}
 
 	return cfg
 }
