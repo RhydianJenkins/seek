@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/rhydianjenkins/seek/src/db"
 )
@@ -16,7 +17,10 @@ func SearchFiles(searchTerm string, limit int) (*SearchResults, error) {
 		}, err
 	}
 
-	searchResult, err := storage.Search(searchTerm, limit)
+	// Normalize search term to lowercase for consistent embeddings
+	normalizedTerm := strings.ToLower(searchTerm)
+
+	searchResult, err := storage.Search(normalizedTerm, limit)
 	if err != nil {
 		return &SearchResults{
 			Success: false,
