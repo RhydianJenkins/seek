@@ -80,33 +80,31 @@ go build
 ## Commands
 
 ### Embed Documents
+
 Generate embeddings for all documents in a directory:
 ```sh
 seek embed --dataDir test-data --chunkSize 1000
 ```
 
 ### Search Knowledge Base
+
 Search for documents using natural language:
 ```sh
-seek search "What is important for me to do this week?" --limit 3
-```
+# Find relevant documents
+seek search "Announcements this week"
 
-### Get Document
-Retrieve a complete document by filename:
-```sh
-# show all documents in current database
+# Ask a question
+seek ask "What is the culture like at the company?"
+
+# Show all documents in current database
 seek list
 
+# Fetch a specific document by filename
 seek get "document.txt"
 ```
 
-### Check Status
-View the status of your knowledge base:
-```sh
-seek status
-```
-
 ### Run MCP Server
+
 Start the MCP server for integration with MCP clients:
 ```sh
 seek mcp
@@ -125,5 +123,3 @@ When running as an MCP server, the following tools are available:
 
 - [ ] Add auth/TLS support
 - [ ] Image/OCR support
-- [ ] Docker image support
-- [ ] `seek ask` command that uses ollama for answers
