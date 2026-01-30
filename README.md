@@ -77,16 +77,16 @@ go build
 
 </details>
 
-## Commands
+# Embed your knowledge base
 
-### Embed Documents
+For seek to work, you first must embed your knowledge base into a qdrant vector database.
 
-Generate embeddings for all documents in a directory:
+To embed your knowledge base, you can use the `embed` command:
 ```sh
-seek embed --dataDir test-data --chunkSize 1000
+seek embed --dataDir /path/to/knowledge/base
 ```
 
-### Search Knowledge Base
+# Search your Knowledge Base
 
 Search for documents using natural language:
 ```sh
@@ -103,14 +103,12 @@ seek list
 seek get "document.txt"
 ```
 
-### Run MCP Server
+# MCP
 
 Start the MCP server for integration with MCP clients:
 ```sh
 seek mcp
 ```
-
-## MCP Tools
 
 When running as an MCP server, the following tools are available:
 
@@ -119,7 +117,7 @@ When running as an MCP server, the following tools are available:
 - `get_document` - Retrieve a full document by filename
 - `status` - Get database status and statistics
 
-## TODO
+# TODO
 
 - [ ] Add auth/TLS support
 - [ ] Image/OCR support
