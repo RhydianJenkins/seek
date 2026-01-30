@@ -6,8 +6,8 @@ This is an early prototype and breaking changes are likely.
 
 ## Features
 
-- **Semantic Search**: Search your knowledge base using natural language queries with vector embeddings
-- **Document Management**: Index and retrieve complete documents from your knowledge base
+- **Natural Language Search**: Ask a question and have a conversation with your knowledge base
+- **Semantic Search**: Search your knowledge base for relevant documents using natural language queries
 - **MCP Integration**: Full Model Context Protocol support for integration with MCP clients
 
 ## Supported File Formats
