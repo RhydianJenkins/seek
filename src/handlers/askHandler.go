@@ -20,8 +20,8 @@ func AskQuestion(question string) error {
 		{
 			Role: "system",
 			Content: "You are a helpful assistant with access to a knowledge base. " +
-				"When answering questions, use the search tool to find relevant information. " +
-				"Provide accurate, concise answers based on the retrieved documents.",
+				"When answering questions, you can use the search tool to find relevant information. " +
+				"Provide accurate, concise answers based on any relevant retrieved documents.",
 		},
 		{
 			Role:    "user",
