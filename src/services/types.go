@@ -1,4 +1,4 @@
-package handlers
+package services
 
 type ProgressCallback func(current, total int, filename string)
 

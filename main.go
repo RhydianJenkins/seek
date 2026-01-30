@@ -44,6 +44,17 @@ func initCmd() *cobra.Command {
 	embedCmd.MarkFlagRequired("dataDir")
 	rootCmd.AddCommand(embedCmd)
 
+	var askCmd = &cobra.Command{
+		Use:   "ask",
+		Short: "Ask a question about the knowledge base",
+		Args:  cobra.ExactArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			question := args[0]
+			handlers.AskQuestion(question)
+		},
+	}
+	rootCmd.AddCommand(askCmd)
+
 	var limit int
 	var searchCmd = &cobra.Command{
 		Use:   "search",

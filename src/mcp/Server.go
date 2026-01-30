@@ -8,7 +8,7 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/rhydianjenkins/seek/src/config"
 	"github.com/rhydianjenkins/seek/src/db"
-	"github.com/rhydianjenkins/seek/src/handlers"
+	"github.com/rhydianjenkins/seek/src/services"
 )
 
 func NewRAGServer() (*MCPServer, error) {
@@ -79,14 +79,14 @@ func (rs *MCPServer) handleSearchTool(
 	ctx context.Context,
 	req *mcp.CallToolRequest,
 	input SearchToolInput,
-) (*mcp.CallToolResult, *handlers.SearchResults, error) {
+) (*mcp.CallToolResult, *services.SearchResults, error) {
 	if input.Limit == 0 {
 		input.Limit = 3
 	}
 
 	log.Printf("Search tool called with query=%s, limit=%d", input.Query, input.Limit)
 
-	results, err := handlers.SearchFiles(input.Query, input.Limit)
+	results, err := services.SearchFiles(input.Query, input.Limit)
 	if err != nil {
 		log.Printf("Search tool error: %v", err)
 		return &mcp.CallToolResult{
@@ -105,14 +105,14 @@ func (rs *MCPServer) handleEmbedTool(
 	ctx context.Context,
 	req *mcp.CallToolRequest,
 	input EmbedToolInput,
-) (*mcp.CallToolResult, *handlers.EmbedResult, error) {
+) (*mcp.CallToolResult, *services.EmbedResult, error) {
 	if input.ChunkSize == 0 {
 		input.ChunkSize = 1000
 	}
 
 	log.Printf("Embed tool called with dataDir=%s, chunkSize=%d", input.DataDir, input.ChunkSize)
 
-	results, err := handlers.EmbedFiles(input.DataDir, input.ChunkSize)
+	results, err := services.EmbedFiles(input.DataDir, input.ChunkSize)
 	if err != nil {
 		log.Printf("Embed tool error: %v", err)
 		return &mcp.CallToolResult{
@@ -153,10 +153,10 @@ func (rs *MCPServer) handleGetDocumentTool(
 	ctx context.Context,
 	req *mcp.CallToolRequest,
 	input GetDocumentToolInput,
-) (*mcp.CallToolResult, *handlers.DocumentResult, error) {
+) (*mcp.CallToolResult, *services.DocumentResult, error) {
 	log.Printf("Get document tool called with filename=%s", input.Filename)
 
-	result, err := handlers.GetDocumentByFilename(input.Filename)
+	result, err := services.GetDocumentByFilename(input.Filename)
 	if err != nil {
 		log.Printf("Get document tool error: %v", err)
 		return &mcp.CallToolResult{
