@@ -33,9 +33,12 @@ func initCmd() *cobra.Command {
 	var dataDir string
 	var chunkSize int
 	var embedCmd = &cobra.Command{
-		Use:   "embed",
+		Use:   "embed --dataDir <directory>",
 		Short: "Generate embeddings for the knowledge base",
-		Args:  cobra.ExactArgs(0),
+		Long:  "Process documents in a directory, split them into chunks, generate embeddings using Ollama, and store them in the Qdrant vector database for semantic search.",
+		Example: `  seek embed --dataDir ./documents
+  seek embed --dataDir ./docs --chunkSize 500`,
+		Args: cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
 			handlers.Embed(dataDir, chunkSize)
 		},
@@ -46,9 +49,12 @@ func initCmd() *cobra.Command {
 	rootCmd.AddCommand(embedCmd)
 
 	var askCmd = &cobra.Command{
-		Use:   "ask",
+		Use:   "ask <question>",
 		Short: "Ask a question about the knowledge base",
-		Args:  cobra.ExactArgs(1),
+		Long:  "Ask a natural language question and get answers based on your indexed documents. The AI will search the knowledge base and provide relevant information.",
+		Example: `  seek ask "What is the company culture?"
+  seek ask "How does authentication work?"`,
+		Args: cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			question := args[0]
 			err := handlers.AskQuestion(question)
@@ -62,9 +68,12 @@ func initCmd() *cobra.Command {
 
 	var limit int
 	var searchCmd = &cobra.Command{
-		Use:   "search",
+		Use:   "search <query>",
 		Short: "Search the knowledge base",
-		Args:  cobra.ExactArgs(1),
+		Long:  "Perform semantic search on the indexed documents using embeddings. Returns the most relevant chunks of text based on similarity.",
+		Example: `  seek search "authentication"
+  seek search "company culture" --limit 5`,
+		Args: cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			searchTerm := args[0]
 			handlers.Search(searchTerm, limit)
@@ -74,9 +83,12 @@ func initCmd() *cobra.Command {
 	rootCmd.AddCommand(searchCmd)
 
 	var getCmd = &cobra.Command{
-		Use:   "get",
+		Use:   "get <filename>",
 		Short: "Get a full document by filename",
-		Args:  cobra.ExactArgs(1),
+		Long:  "Retrieve and display the complete contents of a document from the knowledge base by its filename. All chunks are reassembled in order.",
+		Example: `  seek get "README.md"
+  seek get "docs/architecture.txt"`,
+		Args: cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			filename := args[0]
 			handlers.GetDocument(filename)
@@ -87,7 +99,9 @@ func initCmd() *cobra.Command {
 	var statusCmd = &cobra.Command{
 		Use:   "status",
 		Short: "Show the status of the database",
-		Args:  cobra.ExactArgs(0),
+		Long:  "Display information about the Qdrant vector database including whether the collection exists, how many vectors are stored, and collection configuration.",
+		Example: `  seek status`,
+		Args:    cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
 			handlers.Status()
 		},
@@ -98,7 +112,10 @@ func initCmd() *cobra.Command {
 	var listCmd = &cobra.Command{
 		Use:   "list",
 		Short: "List all document names in the database",
-		Args:  cobra.ExactArgs(0),
+		Long:  "Display all unique document filenames that have been indexed in the knowledge base.",
+		Example: `  seek list
+  seek list --limit 50`,
+		Args: cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
 			handlers.List(listLimit)
 		},
