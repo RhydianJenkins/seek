@@ -44,8 +44,6 @@ func chunkText(text string, maxChunkSize int) []string {
 }
 
 func readTextFiles(dataDir string) (map[string]string, error) {
-	// TODO Rhydian we load all files and their content into memory
-	// This might get too big for some systems
 	files := make(map[string]string)
 	reader := readers.NewReader()
 
