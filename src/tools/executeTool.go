@@ -12,7 +12,7 @@ func ExecuteTool(toolCall ollama.ToolCall) (string, error) {
 	switch toolCall.Function.Name {
 	case "search":
 		// Parse flexibly - Ollama may send limit as string or int
-		var rawInput map[string]interface{}
+		var rawInput map[string]any
 		if err := json.Unmarshal(toolCall.Function.Arguments, &rawInput); err != nil {
 			return "", fmt.Errorf("failed to parse search arguments: %w", err)
 		}
