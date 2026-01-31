@@ -79,9 +79,12 @@ func applyDefaults(cfg *Config) *Config {
 		cfg.ServerVersion = "dev"
 	}
 
+	if cfg.ChatModel == "" {
+		cfg.ChatModel = getEnv("CHAT_MODEL")
+	}
+
 	cfg.VectorSize = 768
 	cfg.EmbeddingModel = "nomic-embed-text"
-	cfg.ChatModel = "qwen2.5"
 
 	return cfg
 }
