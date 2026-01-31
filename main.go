@@ -97,9 +97,9 @@ func initCmd() *cobra.Command {
 	rootCmd.AddCommand(getCmd)
 
 	var statusCmd = &cobra.Command{
-		Use:   "status",
-		Short: "Show the status of the database",
-		Long:  "Display information about the Qdrant vector database including whether the collection exists, how many vectors are stored, and collection configuration.",
+		Use:     "status",
+		Short:   "Show the status of the database",
+		Long:    "Display information about the Qdrant vector database including whether the collection exists, how many vectors are stored, and collection configuration.",
 		Example: `  seek status`,
 		Args:    cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
