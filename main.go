@@ -19,7 +19,9 @@ var logfile = "seek.log"
 
 func initCmd() *cobra.Command {
 	var rootCmd = &cobra.Command{
-		Short: "RAG MCP Server",
+		Use:   "seek",
+		Short: "Knowledge base search engine",
+		Long:  "Seek is a knowledge base search engine that uses AI to answer questions about the indexed documents.",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			config.Initialize(&config.Config{
 				ServerVersion: strings.TrimSpace(version),
